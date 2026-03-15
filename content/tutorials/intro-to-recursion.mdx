@@ -1,0 +1,69 @@
+---
+title: "Intro to Recursion"
+description: "Demystify recursion with visual examples — understand the call stack, base cases, and when to reach for recursive solutions."
+date: "2026-03-05"
+youtubeId: "dQw4w9WgXcQ"
+tags: ["recursion", "fundamentals", "call-stack"]
+author: "All About CS"
+published: true
+---
+
+# Intro to Recursion
+
+Recursion is one of those topics that feels magical until it clicks — and then it becomes one of the most powerful tools in your kit.
+
+<YouTubeEmbed id="dQw4w9WgXcQ" title="Recursion Explained Visually" />
+
+## The Two Rules of Recursion
+
+Every recursive function needs exactly two things:
+
+1. **A base case** — the condition that stops the recursion.
+2. **A recursive step** — where the function calls itself with a *smaller* version of the problem.
+
+Break either rule, and you'll get an infinite loop (or more precisely, a stack overflow).
+
+## Classic Example: Factorial
+
+```javascript
+function factorial(n) {
+  if (n <= 1) return 1;        // base case
+  return n * factorial(n - 1); // recursive step
+}
+
+factorial(5); // 5 × 4 × 3 × 2 × 1 = 120
+```
+
+### What Happens on the Call Stack?
+
+```
+factorial(5)
+  → 5 × factorial(4)
+    → 4 × factorial(3)
+      → 3 × factorial(2)
+        → 2 × factorial(1)
+          → 1  ← base case hit, start unwinding
+        → 2 × 1 = 2
+      → 3 × 2 = 6
+    → 4 × 6 = 24
+  → 5 × 24 = 120
+```
+
+Each call waits for the one below it to finish before it can compute its result. That "waiting" is the call stack growing.
+
+## When to Use Recursion
+
+Recursion shines when the problem has **self-similar sub-problems**:
+
+- Tree traversal (DOM, file systems, ASTs)
+- Divide-and-conquer algorithms (merge sort, quicksort)
+- Backtracking (sudoku solvers, path finding)
+- Mathematical definitions (Fibonacci, factorials, permutations)
+
+## When *Not* to Use It
+
+If a simple `for` loop solves the problem clearly, prefer iteration. Recursion adds call-stack overhead and can blow the stack on very deep inputs unless you use tail-call optimization (which JavaScript engines don't reliably support).
+
+---
+
+*Up next: we'll combine recursion with Big-O to analyze **merge sort** — a beautiful divide-and-conquer algorithm.*

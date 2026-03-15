@@ -1,0 +1,74 @@
+---
+title: "Understanding Big-O Notation"
+description: "A beginner-friendly guide to Big-O notation — learn how to analyze algorithm efficiency with practical examples in JavaScript."
+date: "2026-03-10"
+youtubeId: "dQw4w9WgXcQ"
+tags: ["algorithms", "big-o", "fundamentals"]
+author: "All About CS"
+published: true
+---
+
+# Understanding Big-O Notation
+
+Every developer eventually encounters the question: **"How fast is your algorithm?"**  
+Big-O notation gives us a shared vocabulary to answer it — without arguing over hardware or language benchmarks.
+
+<YouTubeEmbed id="dQw4w9WgXcQ" title="Big-O Notation Explained" />
+
+## What Is Big-O?
+
+Big-O describes the **upper bound** of an algorithm's growth rate. It tells us how the runtime (or space) scales as the input size `n` grows toward infinity.
+
+> Think of it as a worst-case speed limit — not the exact speed your code runs at, but the ceiling on how bad it can get.
+
+## Common Complexities
+
+| Big-O | Name | Example |
+|-------|------|---------|
+| O(1) | Constant | Array index lookup |
+| O(log n) | Logarithmic | Binary search |
+| O(n) | Linear | Looping through an array |
+| O(n log n) | Linearithmic | Merge sort |
+| O(n²) | Quadratic | Nested loops |
+
+## A Practical Example
+
+Let's compare two approaches to finding a duplicate in an array.
+
+### The Naive Way — O(n²)
+
+```javascript
+function hasDuplicate(arr) {
+  for (let i = 0; i < arr.length; i++) {
+    for (let j = i + 1; j < arr.length; j++) {
+      if (arr[i] === arr[j]) return true;
+    }
+  }
+  return false;
+}
+```
+
+For every element, we compare it with every other element — that's `n × n` operations in the worst case.
+
+### The Smart Way — O(n)
+
+```javascript
+function hasDuplicate(arr) {
+  const seen = new Set();
+  for (const item of arr) {
+    if (seen.has(item)) return true;
+    seen.add(item);
+  }
+  return false;
+}
+```
+
+A `Set` gives us O(1) lookups, so we only need a single pass through the array.
+
+## The Key Takeaway
+
+Big-O isn't about micro-optimizing. It's about **choosing the right approach** before you write a single line of code. An O(n) solution will always beat an O(n²) solution at scale — regardless of the language, framework, or machine.
+
+---
+
+*Next up: we'll explore **sorting algorithms** and see how Big-O helps us pick the right one for each situation.*
