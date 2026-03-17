@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
+import remarkGfm from "remark-gfm";
 import { getTutorialBySlug, getTutorialSlugs } from "@/lib/mdx";
 import {
   generateTechArticleJsonLd,
@@ -129,7 +130,11 @@ export default async function TutorialPage({ params }: TutorialPageProps) {
           )}
         </header>
 
-        <MDXRemote source={content} components={mdxComponents} />
+        <MDXRemote
+          source={content}
+          components={mdxComponents}
+          options={{ mdxOptions: { remarkPlugins: [remarkGfm] } }}
+        />
       </DualModeLayout>
     </>
   );

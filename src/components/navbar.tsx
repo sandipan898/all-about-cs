@@ -1,5 +1,8 @@
 import Link from "next/link";
 import { BookOpen, Sparkles, LogIn } from "lucide-react";
+import { MobileNav } from "./mobile-nav";
+import { SearchTrigger } from "./search-trigger";
+import { ThemeToggle } from "./theme-toggle";
 
 export function Navbar() {
   return (
@@ -13,7 +16,7 @@ export function Navbar() {
           </span>
         </Link>
 
-        {/* Center nav */}
+        {/* Desktop center nav — hidden on mobile */}
         <ul className="hidden items-center gap-8 text-sm font-medium md:flex">
           <li>
             <Link
@@ -41,14 +44,16 @@ export function Navbar() {
           </li>
         </ul>
 
-        {/* Right actions */}
-        <div className="flex items-center gap-3">
+        {/* Search + Theme + Desktop actions — hidden on mobile */}
+        <div className="hidden items-center gap-3 md:flex">
+          <SearchTrigger />
+          <ThemeToggle />
           <button
             type="button"
             className="inline-flex items-center gap-1.5 rounded-lg border border-primary/40 bg-primary/10 px-3.5 py-1.5 text-sm font-semibold text-primary transition-colors hover:bg-primary/20"
           >
             <Sparkles className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">Go Pro</span>
+            Go Pro
           </button>
 
           <button
@@ -56,8 +61,15 @@ export function Navbar() {
             className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3.5 py-1.5 text-sm font-medium text-muted transition-colors hover:border-foreground/20 hover:text-foreground"
           >
             <LogIn className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">Login</span>
+            Login
           </button>
+        </div>
+
+        {/* Mobile: search + theme + hamburger — visible only below md */}
+        <div className="flex items-center gap-1 md:hidden">
+          <SearchTrigger />
+          <ThemeToggle />
+          <MobileNav />
         </div>
       </nav>
     </header>

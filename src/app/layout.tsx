@@ -3,6 +3,8 @@ import { Inter, Fira_Code } from "next/font/google";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { JsonLd } from "@/components/json-ld";
+import { SearchProvider } from "@/components/search-trigger";
+import { ThemeProvider } from "@/components/theme-provider";
 import { generateWebSiteJsonLd } from "@/lib/json-ld";
 import "./globals.css";
 
@@ -36,12 +38,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${firaCode.variable}`}>
+    <html lang="en" className={`${inter.variable} ${firaCode.variable}`} suppressHydrationWarning>
       <body className="flex min-h-screen flex-col antialiased">
-        <JsonLd data={generateWebSiteJsonLd()} />
-        <Navbar />
-        <main className="flex-1">{children}</main>
-        <Footer />
+        <ThemeProvider>
+          <JsonLd data={generateWebSiteJsonLd()} />
+          <SearchProvider>
+            <Navbar />
+            <main className="flex-1">{children}</main>
+            <Footer />
+          </SearchProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

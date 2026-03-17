@@ -4,6 +4,7 @@ import { type ReactNode } from "react";
 import { DualModeProvider, useDualMode } from "./dual-mode-provider";
 import { DualModeToggle } from "./dual-mode-toggle";
 import { YouTubeEmbed } from "./youtube-embed";
+import { AdPlacement } from "./ads/ad-placement";
 
 interface DualModeLayoutProps {
   children: ReactNode;
@@ -11,11 +12,6 @@ interface DualModeLayoutProps {
   videoTitle?: string;
 }
 
-/**
- * Wraps a tutorial page with the dual-mode experience.
- * - Read Mode:  single centered column; video is a collapsed card inline.
- * - Watch Mode: two-column split; video sticks to the left, prose scrolls right.
- */
 export function DualModeLayout({
   children,
   youtubeId,
@@ -30,6 +26,9 @@ export function DualModeLayout({
   );
 }
 
+const proseClasses =
+  "prose prose-headings:font-bold prose-headings:tracking-tight prose-a:text-accent prose-a:no-underline hover:prose-a:underline prose-pre:rounded-xl prose-pre:border prose-pre:border-border prose-img:rounded-xl";
+
 function DualModeInner({
   children,
   youtubeId,
@@ -39,28 +38,47 @@ function DualModeInner({
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-      {/* Toggle bar — always visible */}
       <div className="mb-6 flex justify-end">
         <DualModeToggle />
       </div>
 
       {mode === "read" ? (
-        /* ── Read Mode: single column ── */
-        <article className="prose prose-invert mx-auto max-w-3xl prose-headings:font-bold prose-headings:tracking-tight prose-a:text-accent prose-a:no-underline hover:prose-a:underline prose-pre:rounded-xl prose-pre:border prose-pre:border-border prose-pre:bg-surface prose-img:rounded-xl">
-          {children}
-        </article>
-      ) : (
-        /* ── Watch Mode: two-column split ── */
-        <div className="grid gap-8 lg:grid-cols-[1fr_1fr]">
-          {/* Left: sticky video */}
+        /* ── Read Mode: content center + optional sidebar ── */
+        <div className="grid gap-10 xl:grid-cols-[1fr_240px]">
           <div>
-            <YouTubeEmbed id={youtubeId} title={videoTitle} />
+            <article className={`${proseClasses} mx-auto max-w-3xl xl:mx-0`}>
+              {children}
+            </article>
+
+            {/* Article-bottom ad — after content, outside prose */}
+            <div className="mx-auto mt-12 max-w-3xl xl:mx-0">
+              <AdPlacement location="article-bottom" />
+            </div>
           </div>
 
-          {/* Right: scrollable prose */}
-          <article className="prose prose-invert max-w-none prose-headings:font-bold prose-headings:tracking-tight prose-a:text-accent prose-a:no-underline hover:prose-a:underline prose-pre:rounded-xl prose-pre:border prose-pre:border-border prose-pre:bg-surface prose-img:rounded-xl">
-            {children}
-          </article>
+          {/* Desktop sidebar — hidden below xl */}
+          <aside className="hidden xl:block">
+            <div className="sticky top-24">
+              <AdPlacement location="sidebar" />
+            </div>
+          </aside>
+        </div>
+      ) : (
+        /* ── Watch Mode: two-column split ── */
+        <div>
+          <div className="grid gap-8 lg:grid-cols-[1fr_1fr]">
+            <div>
+              <YouTubeEmbed id={youtubeId} title={videoTitle} />
+            </div>
+            <article className={`${proseClasses} max-w-none`}>
+              {children}
+            </article>
+          </div>
+
+          {/* Article-bottom ad — full width below split */}
+          <div className="mx-auto mt-12 max-w-3xl">
+            <AdPlacement location="article-bottom" />
+          </div>
         </div>
       )}
     </div>
