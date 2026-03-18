@@ -1,0 +1,188 @@
+---
+title: "Python Operators — The Complete Guide"
+description: "Master every category of Python operator — arithmetic, assignment, comparison, logical, and bitwise — with clear examples, truth tables, and a precedence reference."
+date: "2026-02-19"
+youtubeId: "dQw4w9WgXcQ"
+tags: ["python", "operators", "beginner", "fundamentals"]
+author: "All About CS"
+published: true
+---
+
+# Python Operators — The Complete Guide
+
+Operators are the verbs of any programming language. They tell Python *what to do* with your data — add it, compare it, combine it, or shift it bit by bit. A solid grasp of operators is foundational to writing expressive, bug-free code.
+
+<YouTubeEmbed id="dQw4w9WgXcQ" title="Python Operators — The Complete Guide" />
+
+## Key Takeaways
+
+- Python groups operators into five major categories: **arithmetic**, **assignment**, **comparison**, **logical**, and **bitwise**
+- Comparison operators always return `True` or `False` — they are the backbone of conditional logic
+- Logical operators (`and`, `or`, `not`) let you combine multiple conditions into a single expression
+- Bitwise operators work directly on the binary representation of integers
+- **Operator precedence** determines evaluation order when multiple operators appear in one expression
+
+## Arithmetic Operators
+
+**Arithmetic operators** perform standard math on numeric values.
+
+| Operator | Name | Example | Result |
+|----------|------|---------|--------|
+| `+` | Addition | `7 + 3` | `10` |
+| `-` | Subtraction | `7 - 3` | `4` |
+| `*` | Multiplication | `7 * 3` | `21` |
+| `/` | Division | `7 / 3` | `2.333…` |
+| `%` | Modulus | `7 % 3` | `1` |
+| `**` | Exponentiation | `7 ** 3` | `343` |
+| `//` | Floor division | `7 // 3` | `2` |
+
+```python
+a, b = 17, 5
+
+print(a + b)   # 22
+print(a - b)   # 12
+print(a * b)   # 85
+print(a / b)   # 3.4  — always returns a float
+print(a % b)   # 2    — remainder after division
+print(a ** b)  # 1419857 — 17 raised to the power 5
+print(a // b)  # 3    — quotient rounded down to nearest int
+```
+
+> 🖼️ **Visual Suggestion:** A diagram showing the difference between `/` (true division) and `//` (floor division) on a number line.
+
+## Assignment Operators
+
+**Assignment operators** store — and optionally transform — a value in a variable. Every compound assignment is shorthand for a longer expression.
+
+| Operator | Equivalent | Example |
+|----------|-----------|---------|
+| `=` | — | `x = 10` |
+| `+=` | `x = x + 3` | `x += 3` → `13` |
+| `-=` | `x = x - 3` | `x -= 3` → `7` |
+| `*=` | `x = x * 3` | `x *= 3` → `30` |
+| `/=` | `x = x / 3` | `x /= 3` → `3.33…` |
+| `%=` | `x = x % 3` | `x %= 3` → `1` |
+| `**=` | `x = x ** 3` | `x **= 3` → `1000` |
+| `//=` | `x = x // 3` | `x //= 3` → `3` |
+
+```python
+score = 100
+score += 15   # player earned bonus points
+score -= 20   # penalty applied
+print(score)  # 95
+```
+
+## Comparison Operators
+
+**Comparison operators** evaluate a relationship between two values and return a boolean — `True` or `False`.
+
+| Operator | Meaning | Example | Result |
+|----------|---------|---------|--------|
+| `==` | Equal to | `5 == 5` | `True` |
+| `!=` | Not equal to | `5 != 3` | `True` |
+| `>` | Greater than | `5 > 3` | `True` |
+| `<` | Less than | `5 < 3` | `False` |
+| `>=` | Greater or equal | `5 >= 5` | `True` |
+| `<=` | Less or equal | `5 <= 3` | `False` |
+
+```python
+age = 20
+print(age >= 18)   # True — old enough to vote
+print(age == 21)   # False
+print(age != 20)   # False — age is exactly 20
+```
+
+## Logical Operators
+
+**Logical operators** combine boolean expressions. They are essential for building complex conditions.
+
+| Operator | Description | Example | Result |
+|----------|-------------|---------|--------|
+| `and` | True if *both* operands are True | `True and False` | `False` |
+| `or` | True if *at least one* operand is True | `True or False` | `True` |
+| `not` | Inverts the boolean value | `not True` | `False` |
+
+### Truth Tables
+
+| A | B | A and B | A or B |
+|---|---|---------|--------|
+| True | True | True | True |
+| True | False | False | True |
+| False | True | False | True |
+| False | False | False | False |
+
+```python
+temperature = 32
+is_weekend = True
+
+# Both conditions must be true for a beach day
+if temperature > 30 and is_weekend:
+    print("Perfect beach day!")
+
+# At least one condition triggers an alert
+has_fever = True
+has_cough = False
+if has_fever or has_cough:
+    print("Consider resting today.")
+```
+
+## Bitwise Operators
+
+**Bitwise operators** manipulate integers at the binary level. They are niche but powerful — commonly used in permissions, flags, and low-level algorithms.
+
+| Operator | Name | Description |
+|----------|------|-------------|
+| `&` | AND | Sets each bit to 1 if both bits are 1 |
+| `\|` | OR | Sets each bit to 1 if at least one bit is 1 |
+| `^` | XOR | Sets each bit to 1 if exactly one bit is 1 |
+| `~` | NOT | Inverts all bits |
+| `<<` | Left shift | Shifts bits left, filling with zeros |
+| `>>` | Right shift | Shifts bits right, discarding rightmost bits |
+
+```python
+# 4 in binary: 100
+# 5 in binary: 101
+print(4 & 5)   # 4  — binary 100 (only the leftmost bit is shared)
+print(4 | 5)   # 5  — binary 101
+print(4 ^ 5)   # 1  — binary 001 (only the rightmost bit differs)
+print(~4)      # -5 — inverts all bits (two's complement)
+print(4 << 1)  # 8  — 100 becomes 1000
+print(4 >> 1)  # 2  — 100 becomes 10
+```
+
+> 🖼️ **Visual Suggestion:** A step-by-step binary grid showing how `4 & 5` evaluates to `4` bit by bit.
+
+## Operator Precedence
+
+When multiple operators appear in a single expression, Python follows a strict **precedence** hierarchy. Higher rows are evaluated first.
+
+| Priority | Operators | Description |
+|----------|-----------|-------------|
+| 1 (highest) | `**` | Exponentiation |
+| 2 | `~`, `+x`, `-x` | Unary NOT, positive, negative |
+| 3 | `*`, `/`, `//`, `%` | Multiplication, division, modulus |
+| 4 | `+`, `-` | Addition, subtraction |
+| 5 | `<<`, `>>` | Bitwise shifts |
+| 6 | `&` | Bitwise AND |
+| 7 | `^` | Bitwise XOR |
+| 8 | `\|` | Bitwise OR |
+| 9 | `==`, `!=`, `>`, `<`, `>=`, `<=` | Comparisons |
+| 10 | `not` | Logical NOT |
+| 11 | `and` | Logical AND |
+| 12 (lowest) | `or` | Logical OR |
+
+```python
+# Without parentheses, ** binds tighter than -
+result = -2 ** 4    # -(2**4) = -16, NOT (-2)**4
+print(result)       # -16
+
+# Use parentheses to make intent explicit
+result = (-2) ** 4  # 16
+print(result)       # 16
+```
+
+When in doubt, add parentheses. They cost nothing at runtime and make your intent unmistakable to anyone reading your code.
+
+---
+
+*Up next: we'll use these operators inside **conditional statements** — where Python starts making decisions on its own.*

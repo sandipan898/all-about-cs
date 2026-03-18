@@ -1,0 +1,187 @@
+---
+title: "Taking User Input in Python"
+description: "Learn how Python's input() function works, how to cast types for numeric data, and build a simple calculator — your first step toward interactive programs."
+date: "2026-02-14"
+youtubeId: "dQw4w9WgXcQ"
+tags: ["python", "input", "beginner", "interactive"]
+author: "All About CS"
+published: true
+---
+
+# Taking User Input in Python
+
+Every useful program eventually needs to talk to its user. Whether it's asking for a name, accepting a number, or building an interactive menu, the **`input()` function** is where that conversation begins. This guide covers how `input()` works, why type casting matters, and wraps up with a hands-on mini-project.
+
+<YouTubeEmbed id="dQw4w9WgXcQ" title="Taking User Input in Python" />
+
+## Key Takeaways
+
+- **`input()`** pauses execution and waits for the user to type something, then returns it as a **string**.
+- Use **`int()`** or **`float()`** to convert input into numeric types before doing math.
+- The **`type()`** function lets you verify what data type you're working with.
+- Always anticipate that users might enter unexpected data — defensive casting prevents crashes.
+
+## The `input()` Function
+
+The **`input()` function** accepts an optional **prompt** string, displays it to the user, and returns whatever they type as a string.
+
+```python
+# Basic usage — prompt is optional but recommended
+name = input("What is your name? ")
+print(f"Hello, {name}!")
+```
+
+When this runs, Python displays `What is your name? `, waits for the user to type a response and press Enter, then stores that response in `name`.
+
+> 🖼️ **Visual Suggestion:** Terminal screenshot showing the prompt, user typing a name, and the greeting output on the next line.
+
+## `input()` Always Returns a String
+
+This is the single most important thing to remember. Even if the user types `42`, Python treats it as the **string** `"42"`, not the integer `42`.
+
+```python
+age = input("Enter your age: ")
+
+print(age)        # 25 (looks like a number)
+print(type(age))  # <class 'str'> — it's actually a string!
+
+# This will concatenate, not add
+print(age + 10)   # TypeError: can only concatenate str to str
+```
+
+> 🖼️ **Visual Suggestion:** Diagram showing `input()` returning `"25"` (in quotes) with an arrow labeled "always str" — contrasted with the integer `25` (no quotes).
+
+## Type Casting: Converting Input to Numbers
+
+To perform arithmetic with user input, you need to **cast** the string to the appropriate numeric type.
+
+### Casting to `int`
+
+```python
+birth_year = input("Enter your birth year: ")
+birth_year = int(birth_year)  # convert string → integer
+
+current_year = 2026
+age = current_year - birth_year
+print(f"You are approximately {age} years old.")
+```
+
+### Casting to `float`
+
+```python
+temperature = float(input("Enter temperature in Celsius: "))
+fahrenheit = (temperature * 9/5) + 32
+print(f"{temperature}°C = {fahrenheit}°F")
+```
+
+### Inline Casting
+
+You can wrap `input()` directly inside `int()` or `float()` for a more concise style.
+
+```python
+quantity = int(input("How many items? "))
+price = float(input("Price per item: "))
+total = quantity * price
+print(f"Total: ${total:.2f}")
+```
+
+## Verifying Types with `type()`
+
+The **`type()`** function is invaluable for debugging — use it to confirm your variables hold the data type you expect.
+
+```python
+raw = input("Enter a number: ")
+print(type(raw))       # <class 'str'>
+
+converted = int(raw)
+print(type(converted)) # <class 'int'>
+
+decimal = float(raw)
+print(type(decimal))   # <class 'float'>
+```
+
+## A Note on Python 2: `raw_input()`
+
+In **Python 2**, the `input()` function actually evaluated what the user typed as a Python expression — a significant security risk. The safe alternative was **`raw_input()`**, which behaved like Python 3's `input()`.
+
+```python
+# Python 2 (historical reference — do not use in modern code)
+name = raw_input("Enter your name: ")  # returns a string, like Python 3's input()
+```
+
+In **Python 3**, `raw_input()` was removed entirely, and `input()` was made safe by default — it always returns a string. If you encounter `raw_input()` in legacy code, simply replace it with `input()`.
+
+## Practical Example: Adding Two Numbers
+
+A deceptively simple task that illustrates why casting matters.
+
+```python
+# Without casting — produces string concatenation
+a = input("First number: ")   # user types 10
+b = input("Second number: ")  # user types 20
+print(a + b)                  # '1020' — oops!
+
+# With casting — produces correct arithmetic
+a = int(input("First number: "))
+b = int(input("Second number: "))
+print(a + b)                  # 30 ✓
+```
+
+> 🖼️ **Visual Suggestion:** Split-screen terminal comparison — left side showing string concatenation result `"1020"`, right side showing correct integer addition result `30`.
+
+## Mini-Project: Simple Calculator
+
+Let's bring everything together with a practical, interactive calculator.
+
+```python
+print("===== Simple Calculator =====")
+print("Operations: + , - , * , /")
+print()
+
+num1 = float(input("Enter first number:  "))
+num2 = float(input("Enter second number: "))
+operator = input("Enter operator (+, -, *, /): ")
+
+if operator == "+":
+    result = num1 + num2
+elif operator == "-":
+    result = num1 - num2
+elif operator == "*":
+    result = num1 * num2
+elif operator == "/":
+    if num2 != 0:
+        result = num1 / num2
+    else:
+        result = "Error: division by zero"
+else:
+    result = "Error: invalid operator"
+
+print(f"\n{num1} {operator} {num2} = {result}")
+```
+
+### Sample Run
+
+```
+===== Simple Calculator =====
+Operations: + , - , * , /
+
+Enter first number:  15
+Enter second number: 4
+Enter operator (+, -, *, /): *
+
+15.0 * 4.0 = 60.0
+```
+
+This calculator handles all four basic operations and includes a guard against **division by zero** — a good habit to build early.
+
+## What's Next?
+
+With `input()` in your toolkit, you can start building programs that respond to real users. The natural next steps are:
+
+- **Error handling with `try/except`** — gracefully catch invalid input instead of crashing.
+- **Loops** — let the user perform multiple operations without restarting the program.
+- **String methods** — validate and clean user input before processing it.
+
+---
+
+*User input transforms a static script into a living, interactive program. Start simple, cast deliberately, and always consider what happens when the user types something you didn't expect.*

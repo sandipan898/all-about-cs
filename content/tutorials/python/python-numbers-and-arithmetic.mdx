@@ -1,0 +1,187 @@
+---
+title: "Python Numbers and Arithmetic"
+description: "A practical guide to integers, floats, and arithmetic in Python — including operator precedence, type conversion, and the infamous float precision gotcha."
+date: "2026-01-20"
+youtubeId: "dQw4w9WgXcQ"
+tags: ["python", "numbers", "arithmetic", "beginner"]
+author: "All About CS"
+published: true
+---
+
+# Python Numbers and Arithmetic
+
+Numbers are the workhorses of computation. Whether you're calculating grades, building simulations, or processing financial data, a solid grasp of Python's numeric types and operators is essential.
+
+<YouTubeEmbed id="dQw4w9WgXcQ" title="Python Numbers and Arithmetic" />
+
+## Key Takeaways
+
+- Python has two primary numeric types: **int** (whole numbers) and **float** (decimals)
+- Seven arithmetic operators cover all common math operations
+- **Operator precedence** follows standard math rules — use parentheses to be explicit
+- Floating-point numbers have a well-known **precision limitation** you must account for
+- **Type conversion** functions (`int()`, `float()`, `str()`) let you move between types safely
+
+## Integers and Floats
+
+Python distinguishes between whole numbers and decimal numbers:
+
+```python
+# Integers — whole numbers of arbitrary precision
+population = 8_000_000_000    # underscores improve readability
+negative = -42
+zero = 0
+
+# Floats — decimal (floating-point) numbers
+temperature = 98.6
+tiny = 0.001
+scientific = 2.5e10           # 25,000,000,000.0
+```
+
+Python integers have **no size limit** — they grow as large as your memory allows. Floats, however, follow the IEEE 754 double-precision standard (64-bit).
+
+> 🖼️ **Visual Suggestion:** A number line showing where integers and floats sit, highlighting that floats can represent values between integers.
+
+## Arithmetic Operators
+
+Python provides seven arithmetic operators:
+
+| Operator | Name | Example | Result |
+|----------|------|---------|--------|
+| `+` | Addition | `7 + 3` | `10` |
+| `-` | Subtraction | `7 - 3` | `4` |
+| `*` | Multiplication | `7 * 3` | `21` |
+| `/` | Division | `7 / 3` | `2.3333...` |
+| `**` | Exponentiation | `7 ** 3` | `343` |
+| `%` | Modulo (remainder) | `7 % 3` | `1` |
+| `//` | Floor division | `7 // 3` | `2` |
+
+A key distinction: `/` always returns a **float**, even when dividing evenly (`10 / 2` gives `5.0`). Use `//` when you need an **integer result**.
+
+```python
+# Division always returns a float
+print(10 / 2)     # 5.0
+
+# Floor division truncates the decimal
+print(10 // 3)    # 3
+
+# Modulo gives the remainder — useful for even/odd checks
+print(10 % 2)     # 0 (even)
+print(11 % 2)     # 1 (odd)
+
+# Exponentiation replaces math.pow for simple cases
+print(2 ** 10)    # 1024
+```
+
+## Operator Precedence
+
+Python follows the standard mathematical order of operations. From highest to lowest priority:
+
+1. **`()`** — Parentheses (always evaluated first)
+2. **`**`** — Exponentiation
+3. **`*`, `/`, `//`, `%`** — Multiplication, division, floor division, modulo
+4. **`+`, `-`** — Addition and subtraction
+
+```python
+# Without parentheses — multiplication happens first
+result = 2 + 3 * 4
+print(result)  # 14, not 20
+
+# Parentheses override the default order
+result = (2 + 3) * 4
+print(result)  # 20
+```
+
+**Best practice:** even when you know the precedence rules, use parentheses to make your intent explicit. Your future self will thank you.
+
+## The Float Precision Gotcha
+
+This trips up every Python beginner at some point:
+
+```python
+print(0.1 + 0.2)  # 0.30000000000000004 — not 0.3!
+```
+
+This isn't a Python bug — it's a fundamental limitation of **binary floating-point representation**. The number 0.1 cannot be represented exactly in binary, just like 1/3 can't be written exactly in decimal.
+
+### How to Handle It
+
+```python
+# Option 1: Round the result
+print(round(0.1 + 0.2, 1))  # 0.3
+
+# Option 2: Use the decimal module for precise arithmetic
+from decimal import Decimal
+print(Decimal("0.1") + Decimal("0.2"))  # 0.3 — exact
+
+# Option 3: Compare with a tolerance instead of strict equality
+import math
+print(math.isclose(0.1 + 0.2, 0.3))  # True
+```
+
+> 🖼️ **Visual Suggestion:** A callout box highlighting that financial calculations should always use the `decimal` module, never raw floats.
+
+## Mixing Strings and Numbers: TypeError
+
+Python refuses to silently coerce types. Trying to concatenate a string and a number raises a **TypeError**:
+
+```python
+age = 25
+
+# This raises TypeError: can only concatenate str (not "int") to str
+# print("I am " + age + " years old.")
+
+# Fix: convert the number to a string explicitly
+print("I am " + str(age) + " years old.")
+
+# Better: use an f-string (no manual conversion needed)
+print(f"I am {age} years old.")
+```
+
+## Type Conversion Functions
+
+Python provides built-in functions to convert between types:
+
+```python
+# String to integer
+user_input = "42"
+number = int(user_input)
+print(number + 8)    # 50
+
+# String to float
+price = float("19.99")
+print(price * 2)     # 39.98
+
+# Number to string
+score = 100
+message = "Your score: " + str(score)
+print(message)       # "Your score: 100"
+
+# Float to integer (truncates — does NOT round)
+print(int(3.9))      # 3
+print(int(-3.9))     # -3
+```
+
+**Caution:** `int()` truncates toward zero, it does not round. If you need rounding, use `round()` first.
+
+## Putting It All Together
+
+```python
+# A small tip calculator
+bill = 85.50
+tip_rate = 0.18
+party_size = 4
+
+tip = bill * tip_rate
+total = bill + tip
+per_person = round(total / party_size, 2)
+
+print(f"Bill: ${bill}")
+print(f"Tip ({tip_rate:.0%}): ${tip:.2f}")
+print(f"Total: ${total:.2f}")
+print(f"Per person: ${per_person}")
+```
+
+---
+
+*Up next: we'll explore **conditional logic with if/elif/else** — the decision-making engine of every Python program.*

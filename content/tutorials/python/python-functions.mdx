@@ -1,0 +1,227 @@
+---
+title: "Python Functions: Define, Call, and Reuse Your Code"
+description: "Learn how to write reusable Python functions with parameters, return values, default arguments, and nested function calls — complete with practical examples."
+date: "2026-03-06"
+youtubeId: "dQw4w9WgXcQ"
+tags: ["python", "functions", "beginner", "fundamentals"]
+author: "All About CS"
+published: true
+---
+
+# Python Functions: Define, Call, and Reuse Your Code
+
+As your programs grow, copying and pasting the same logic in multiple places quickly becomes a maintenance nightmare. **Functions** solve this by letting you write a piece of logic once, give it a name, and call it wherever you need it. They are the building blocks of clean, organized, and scalable Python code.
+
+<YouTubeEmbed id="dQw4w9WgXcQ" title="Python Functions Explained" />
+
+## Key Takeaways
+
+- A **function** is a reusable block of code that performs a specific task
+- Use `def`, a descriptive name, parentheses, and a colon to define a function
+- **Parameters** let you pass data into a function; **return values** let you get data back out
+- **Default arguments** make parameters optional and prevent missing-argument errors
+- Functions can call other functions, enabling clean separation of concerns
+- Python ships with dozens of **built-in functions** — `print()`, `len()`, `type()`, and more
+- Understanding **scope** prevents subtle bugs caused by local vs. global variables
+
+---
+
+## What Are Functions and Why Use Them?
+
+A function is a named, self-contained block of code designed to perform one specific task. Think of it like a recipe: you define the steps once, then follow (call) the recipe whenever you need the result.
+
+Functions help you:
+
+1. **Avoid repetition** — write the logic once, reuse it everywhere.
+2. **Improve readability** — a well-named function tells readers *what* happens without requiring them to read *how*.
+3. **Simplify debugging** — isolate each task so bugs are easier to locate.
+
+Python offers two categories of functions:
+
+- **Built-in functions** provided by the language itself — `print()`, `len()`, `type()`, `int()`, and many others.
+- **User-defined functions** that you create to solve your own problems.
+
+> 🖼️ **Visual Suggestion:** A diagram showing a main program calling three separate function boxes (get_data, process, display), each with an arrow returning a result.
+
+---
+
+## Defining and Calling a Function
+
+The syntax for creating a function uses the `def` keyword, followed by a name, parentheses, and a colon. The indented block underneath is the **function body**.
+
+```python
+def greet():
+    print("Hello, welcome to Python!")
+```
+
+Defining a function does *not* execute it. You must **call** it by writing its name followed by parentheses:
+
+```python
+greet()  # Hello, welcome to Python!
+greet()  # You can call it as many times as you like
+```
+
+---
+
+## Functions with Parameters and Return Values
+
+### Accepting Input Through Parameters
+
+**Parameters** (also called *formal arguments*) let you feed data into a function so it can produce different results each time.
+
+```python
+def greet_by_name(name):
+    print(f"Hello, {name}! Welcome to Python.")
+
+greet_by_name("Alice")  # Hello, Alice! Welcome to Python.
+greet_by_name("Bob")    # Hello, Bob! Welcome to Python.
+```
+
+### Multiple Parameters and Return Values
+
+Functions can accept several parameters and send a result back with the **`return`** statement.
+
+```python
+def get_discounted_price(price, discount):
+    final_price = price - (price * discount / 100)
+    return final_price
+
+result = get_discounted_price(100, 15)
+print(f"You pay: ${result}")  # You pay: $85.0
+```
+
+Once a `return` statement executes, the function exits immediately. Any code after it inside the same function will not run.
+
+> 🖼️ **Visual Suggestion:** An input/output diagram — `price` and `discount` flow into the function box, and `final_price` flows out via the return arrow.
+
+---
+
+## Default Parameter Values
+
+You can assign a **default value** to a parameter. If the caller omits that argument, the default kicks in automatically.
+
+```python
+def get_discounted_price(price, discount=5):
+    return price - (price * discount / 100)
+
+# Using the default 5% discount
+print(get_discounted_price(200))       # 190.0
+
+# Overriding with a custom 20% discount
+print(get_discounted_price(200, 20))   # 160.0
+```
+
+Defaults are especially useful when a parameter has a sensible "most common" value but still needs to be overridable.
+
+---
+
+## Calling Functions from Other Functions
+
+Real-world programs rarely consist of one function in isolation. Composing smaller functions into larger ones keeps each piece focused and testable.
+
+```python
+def get_price_after_tax(price, tax=2):
+    return price + (price * tax / 100)
+
+def display_final_price(price):
+    taxed_price = get_price_after_tax(price)
+    print(f"Price after tax: ${taxed_price:.2f}")
+
+display_final_price(100)  # Price after tax: $102.00
+```
+
+When `display_final_price` runs, it calls `get_price_after_tax` internally, receives the result, and formats it for output. Each function handles exactly one responsibility.
+
+> 🖼️ **Visual Suggestion:** A call-stack diagram showing `display_final_price` calling `get_price_after_tax`, with arrows indicating the flow of data and return values.
+
+---
+
+## Built-in Functions — A Brief Recap
+
+Python comes batteries-included. Here are some built-in functions you have already been using:
+
+| Function | Purpose | Example |
+|----------|---------|---------|
+| `print()` | Display output | `print("Hi")` |
+| `len()` | Length of a sequence | `len([1, 2, 3])` → `3` |
+| `type()` | Data type of a value | `type(42)` → `<class 'int'>` |
+| `int()` | Convert to integer | `int("7")` → `7` |
+| `str()` | Convert to string | `str(3.14)` → `"3.14"` |
+| `input()` | Read user input | `input("Name: ")` |
+
+You do not need to define these — they are available everywhere in your program by default.
+
+---
+
+## Variable Scope — Local vs. Global
+
+**Scope** determines where a variable can be accessed. Understanding it prevents one of the most common beginner bugs.
+
+- A variable created *inside* a function has **local scope** — it exists only while the function runs.
+- A variable created *outside* all functions has **global scope** — it is accessible anywhere in the file.
+
+```python
+greeting = "Hello"  # global variable
+
+def say_hello():
+    name = "Alice"  # local variable
+    print(f"{greeting}, {name}!")
+
+say_hello()        # Hello, Alice!
+print(greeting)    # Hello
+# print(name)      # NameError — name is not defined outside the function
+```
+
+If you need to modify a global variable from within a function, use the `global` keyword — but do so sparingly, as it makes code harder to reason about.
+
+```python
+counter = 0
+
+def increment():
+    global counter
+    counter += 1
+
+increment()
+print(counter)  # 1
+```
+
+---
+
+## A Sneak Peek: *args and **kwargs
+
+As you progress, you will encounter functions that need to accept a *variable* number of arguments. Python handles this elegantly with two special prefixes.
+
+- **`*args`** collects extra positional arguments into a **tuple**.
+- **`**kwargs`** collects extra keyword arguments into a **dictionary**.
+
+```python
+def summarize(*args, **kwargs):
+    print(f"Positional: {args}")
+    print(f"Keyword:    {kwargs}")
+
+summarize(1, 2, 3, language="Python", level="beginner")
+# Positional: (1, 2, 3)
+# Keyword:    {'language': 'Python', 'level': 'beginner'}
+```
+
+These are powerful tools you will use frequently once you start writing more flexible and reusable utilities.
+
+---
+
+## Quick Reference
+
+| Concept | Syntax / Example |
+|---------|-----------------|
+| Define a function | `def greet(): ...` |
+| Call a function | `greet()` |
+| Parameter | `def greet(name): ...` |
+| Return value | `return result` |
+| Default argument | `def fn(x, y=10): ...` |
+| Local variable | Declared inside a function |
+| Global variable | Declared outside all functions |
+| `*args` | Collects extra positional args as a tuple |
+| `**kwargs` | Collects extra keyword args as a dict |
+
+---
+
+*Up next: we'll explore **Python lists** — one of the most versatile data structures in the language — and learn how to store, access, and manipulate collections of data.*

@@ -16,36 +16,67 @@ export interface TutorialFrontmatter {
 
 export interface TutorialMeta extends TutorialFrontmatter {
   slug: string;
+  category: string;
+}
+
+interface TutorialFile {
+  slug: string;
+  category: string;
+  filePath: string;
 }
 
 /**
- * Returns all .mdx file slugs from the content/tutorials directory.
+ * Recursively discovers all .mdx files under content/tutorials.
+ * Category is derived from the immediate subfolder name
+ * (e.g. content/tutorials/python/foo.mdx → category "python").
+ * Files placed directly in content/tutorials/ get category "general".
  */
-export function getTutorialSlugs(): string[] {
+function discoverTutorialFiles(): TutorialFile[] {
   if (!fs.existsSync(CONTENT_DIR)) return [];
 
-  return fs
-    .readdirSync(CONTENT_DIR)
-    .filter((file) => file.endsWith(".mdx"))
-    .map((file) => file.replace(/\.mdx$/, ""));
+  const files: TutorialFile[] = [];
+
+  function scan(dir: string, category: string) {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      if (entry.isDirectory()) {
+        scan(path.join(dir, entry.name), entry.name);
+      } else if (entry.name.endsWith(".mdx")) {
+        files.push({
+          slug: entry.name.replace(/\.mdx$/, ""),
+          category,
+          filePath: path.join(dir, entry.name),
+        });
+      }
+    }
+  }
+
+  scan(CONTENT_DIR, "general");
+  return files;
+}
+
+/**
+ * Returns all .mdx file slugs from the content/tutorials directory tree.
+ */
+export function getTutorialSlugs(): string[] {
+  return discoverTutorialFiles().map((f) => f.slug);
 }
 
 /**
  * Reads a single tutorial's raw source and parsed frontmatter by slug.
- * Returns null if the file doesn't exist.
+ * Searches across all category subdirectories.
  */
 export function getTutorialBySlug(slug: string) {
-  const filePath = path.join(CONTENT_DIR, `${slug}.mdx`);
+  const file = discoverTutorialFiles().find((f) => f.slug === slug);
+  if (!file) return null;
 
-  if (!fs.existsSync(filePath)) return null;
-
-  const raw = fs.readFileSync(filePath, "utf-8");
+  const raw = fs.readFileSync(file.filePath, "utf-8");
   const { data, content } = matter(raw);
 
   return {
     frontmatter: data as TutorialFrontmatter,
     content,
-    slug,
+    slug: file.slug,
+    category: file.category,
   };
 }
 
@@ -54,24 +85,31 @@ export function getTutorialBySlug(slug: string) {
  * Filters out unpublished tutorials in production.
  */
 export function getAllTutorials(): TutorialMeta[] {
-  const slugs = getTutorialSlugs();
+  const files = discoverTutorialFiles();
 
-  const tutorials = slugs
-    .map((slug) => {
-      const tutorial = getTutorialBySlug(slug);
-      if (!tutorial) return null;
-
-      const { frontmatter } = tutorial;
+  const tutorials = files
+    .map((file) => {
+      const raw = fs.readFileSync(file.filePath, "utf-8");
+      const { data } = matter(raw);
+      const frontmatter = data as TutorialFrontmatter;
 
       if (process.env.NODE_ENV === "production" && frontmatter.published === false) {
         return null;
       }
 
-      return { ...frontmatter, slug };
+      return { ...frontmatter, slug: file.slug, category: file.category };
     })
     .filter((t): t is TutorialMeta => t !== null);
 
   return tutorials.sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
   );
+}
+
+/**
+ * Returns the set of unique categories that have at least one published tutorial.
+ */
+export function getCategories(): string[] {
+  const tutorials = getAllTutorials();
+  return [...new Set(tutorials.map((t) => t.category))].sort();
 }

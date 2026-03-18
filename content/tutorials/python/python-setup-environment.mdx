@@ -1,0 +1,110 @@
+---
+title: "Setting Up Your Python Development Environment"
+description: "A complete guide to setting up Python with Sublime Text, VS Code, and other modern editors — from installation to your first script."
+date: "2026-01-05"
+youtubeId: "dQw4w9WgXcQ"
+tags: ["python", "setup", "beginner", "ide"]
+author: "All About CS"
+published: true
+---
+
+# Setting Up Your Python Development Environment
+
+Before writing a single line of Python, you need a comfortable workspace. The right editor setup eliminates friction and lets you focus entirely on learning the language.
+
+<YouTubeEmbed id="dQw4w9WgXcQ" title="Setting Up Python Development Environment" />
+
+## Key Takeaways
+
+- **Sublime Text** is lightweight and fast — ideal for beginners who want minimal distraction
+- **Package Control** unlocks powerful extensions like SublimeREPL and Anaconda
+- **VS Code and PyCharm** are modern alternatives with richer debugging and Git integration
+- You can always fall back to the **terminal** to run Python scripts directly
+
+## Installing Sublime Text
+
+Head to [sublimetext.com](https://www.sublimetext.com) and download the installer for your operating system. The installation is straightforward — accept the defaults and launch the editor.
+
+> 🖼️ **Visual Suggestion:** Screenshot of the Sublime Text download page with the correct OS highlighted.
+
+Once Sublime Text is open, create a new file, type a quick test, and save it with the `.py` extension:
+
+```python
+# hello.py — your first Python script
+print("Hello, world!")
+```
+
+## Configuring a Python Build System
+
+Sublime Text can run Python directly if you set up a **build system**. Navigate to **Tools → Build System → New Build System** and paste:
+
+```json
+{
+    "cmd": ["python3", "-u", "$file"],
+    "file_regex": "^[ ]*File \"(...*?)\", line ([0-9]*)",
+    "selector": "source.python"
+}
+```
+
+Save the file as `Python3.sublime-build`. Now select **Tools → Build System → Python3**, and press `Ctrl+B` (or `Cmd+B` on macOS) to run any open `.py` file.
+
+## Installing Package Control and Extensions
+
+**Package Control** is Sublime Text's package manager. Open the **Command Palette** (`Ctrl+Shift+P`) and type `Install Package Control`. Once installed, you can search for and install any extension.
+
+### Recommended Packages
+
+| Package | Purpose |
+|---------|---------|
+| **SublimeREPL** | Run an interactive Python session inside the editor — essential for scripts that use `input()` |
+| **Anaconda** (Sublime package) | Linting, autocompletion, and code navigation for Python |
+| **Kite** | AI-powered code completions (optional) |
+
+> 🖼️ **Visual Suggestion:** Animated GIF showing Package Control installing SublimeREPL via the Command Palette.
+
+## Running Python from the Terminal
+
+You don't always need an editor's build system. Open your system terminal and run:
+
+```bash
+# Navigate to your project folder
+cd ~/projects
+
+# Run a Python script directly
+python3 hello.py
+```
+
+This approach works everywhere and is especially useful for debugging or running scripts with command-line arguments.
+
+## Modern Alternatives Worth Considering
+
+Sublime Text is excellent, but the ecosystem has evolved. Two alternatives dominate professional Python development today:
+
+### VS Code
+
+**Visual Studio Code** offers built-in terminal integration, a rich Python extension from Microsoft, and first-class Git support. Its **debugger** lets you set breakpoints and inspect variables visually — a massive upgrade over print-statement debugging.
+
+### PyCharm
+
+**PyCharm Community Edition** is free and purpose-built for Python. It provides intelligent refactoring, virtual environment management, and a built-in test runner. The trade-off is heavier resource usage compared to Sublime Text.
+
+> 🖼️ **Visual Suggestion:** Side-by-side comparison of the same Python file open in Sublime Text, VS Code, and PyCharm.
+
+## Quick Verification Script
+
+Regardless of which editor you choose, run this script to confirm everything is working:
+
+```python
+import sys
+
+# Display your Python version and installation path
+print(f"Python version: {sys.version}")
+print(f"Installation path: {sys.executable}")
+print("Your environment is ready — happy coding!")
+```
+
+If you see version output without errors, your setup is complete.
+
+---
+
+*Up next: we'll put this environment to use by exploring **variables and data types** — the building blocks of every Python program.*

@@ -1,0 +1,177 @@
+---
+title: "Python Conditionals — if, elif, else, and Beyond"
+description: "Learn how Python makes decisions with if, elif, and else — plus indentation rules, nested conditions, and the ternary expression."
+date: "2026-02-24"
+youtubeId: "dQw4w9WgXcQ"
+tags: ["python", "conditionals", "if-else", "beginner", "control-flow"]
+author: "All About CS"
+published: true
+---
+
+# Python Conditionals — if, elif, else, and Beyond
+
+Every useful program needs to make decisions. Should the user see a dashboard or a login page? Is the input valid? Did the transaction succeed? **Conditional statements** are how Python answers these questions — by evaluating expressions and choosing which block of code to execute.
+
+<YouTubeEmbed id="dQw4w9WgXcQ" title="Python Conditionals — if, elif, else, and Beyond" />
+
+## Key Takeaways
+
+- The `if` statement executes a block only when its condition is `True`
+- `if-else` provides a two-way branch — one path for `True`, another for `False`
+- `if-elif-else` chains handle **multiple mutually exclusive conditions** cleanly
+- Python uses **indentation** (not braces) to define code blocks — this is non-negotiable
+- The **ternary expression** offers a concise single-line alternative for simple conditions
+- Conditionals can be **nested**, but deep nesting is a code smell worth refactoring
+
+## The `if` Statement
+
+The simplest conditional. If the condition evaluates to `True`, the indented block runs. Otherwise, Python skips it entirely.
+
+```python
+number = 10
+
+if number > 0:
+    print(f"{number} is a positive number")
+# Output: 10 is a positive number
+```
+
+> 🖼️ **Visual Suggestion:** A flowchart showing a single diamond (condition) with a "True" path leading to the code block and a "False" path that skips it.
+
+## The `if-else` Statement
+
+When you need exactly two outcomes — one for `True` and one for `False` — add an `else` clause.
+
+```python
+age = 15
+
+if age >= 18:
+    print("You are eligible to vote.")
+else:
+    print("You are not old enough to vote yet.")
+# Output: You are not old enough to vote yet.
+```
+
+The `else` block acts as a catch-all. It has no condition of its own — it simply handles every case that the `if` didn't match.
+
+## The `if-elif-else` Chain
+
+Real-world decisions rarely have only two outcomes. The **elif** keyword (short for "else if") lets you test multiple conditions in sequence. Python evaluates them top-to-bottom and executes the *first* block whose condition is `True`.
+
+```python
+score = 73
+
+if score >= 90:
+    grade = "A"
+elif score >= 80:
+    grade = "B"
+elif score >= 70:
+    grade = "C"
+elif score >= 60:
+    grade = "D"
+else:
+    grade = "F"
+
+print(f"Score: {score} → Grade: {grade}")
+# Output: Score: 73 → Grade: C
+```
+
+Once a matching branch executes, all remaining `elif` and `else` blocks are skipped — even if their conditions would also be `True`.
+
+## Indentation — Python's Defining Feature
+
+Most languages use curly braces `{}` to define code blocks. Python uses **indentation** — typically four spaces per level. This is not a style preference; it is part of the language's syntax.
+
+```python
+# Correct — consistent 4-space indentation
+if True:
+    print("This is inside the if block")
+    print("So is this")
+
+# IndentationError — inconsistent spacing will crash your program
+if True:
+    print("four spaces")
+      print("six spaces")  # raises IndentationError
+```
+
+The benefit is immediate: Python code is inherently readable because its visual structure *is* its logical structure. The trade-off is that sloppy spacing will produce errors, so configure your editor to insert spaces (not tabs) and display whitespace characters.
+
+> 🖼️ **Visual Suggestion:** A side-by-side comparison of the same logic in C (with braces) and Python (with indentation) to show how Python enforces visual clarity.
+
+## Nested Conditionals
+
+You can place conditionals inside other conditionals. This is useful when a secondary decision depends on the outcome of a first.
+
+```python
+num = -7
+
+if num != 0:
+    if num > 0:
+        print("Positive")
+    else:
+        print("Negative")
+else:
+    print("Zero")
+# Output: Negative
+```
+
+Nesting beyond two levels usually signals that your logic should be simplified — consider extracting helper functions or restructuring with `elif`.
+
+## The Ternary (Conditional) Expression
+
+Python supports a compact one-liner for simple if-else decisions. The syntax reads almost like English:
+
+```python
+n = 42
+label = "even" if n % 2 == 0 else "odd"
+print(label)  # even
+```
+
+This is equivalent to:
+
+```python
+if n % 2 == 0:
+    label = "even"
+else:
+    label = "odd"
+```
+
+Use the ternary form when the logic is trivial. For anything more complex, stick with a full `if-else` block — readability always wins.
+
+## Practical Example — Grade Calculator
+
+Bringing it all together: a small program that reads a numeric score, validates it, and outputs a letter grade with feedback.
+
+```python
+score = int(input("Enter your score (0-100): "))
+
+if score < 0 or score > 100:
+    print("Invalid score. Please enter a number between 0 and 100.")
+elif score >= 90:
+    print(f"Score {score} → Grade A — Outstanding work!")
+elif score >= 80:
+    print(f"Score {score} → Grade B — Great job!")
+elif score >= 70:
+    print(f"Score {score} → Grade C — Solid effort.")
+elif score >= 60:
+    print(f"Score {score} → Grade D — Room for improvement.")
+else:
+    print(f"Score {score} → Grade F — Let's review the material together.")
+```
+
+Notice how the validation check comes *first*. Guarding against bad input early keeps the rest of your logic clean and predictable.
+
+> 🖼️ **Visual Suggestion:** A flowchart showing the grade calculator's full decision tree — from input validation through each grade threshold to the final output.
+
+## Quick Reference
+
+| Pattern | Use Case |
+|---------|----------|
+| `if` | Execute code only when a condition is true |
+| `if-else` | Choose between exactly two paths |
+| `if-elif-else` | Select from multiple mutually exclusive paths |
+| Ternary `x if cond else y` | Inline value selection for simple cases |
+| Nested `if` | Secondary decision that depends on a prior check |
+
+---
+
+*Up next: we'll explore **loops** — the mechanism that lets Python repeat actions without repeating code.*

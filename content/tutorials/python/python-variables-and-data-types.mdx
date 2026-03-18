@@ -1,0 +1,160 @@
+---
+title: "Python Variables and Data Types"
+description: "Understand how Python stores data — from naming rules and type checking to a hands-on tour of every built-in data type."
+date: "2026-01-10"
+youtubeId: "dQw4w9WgXcQ"
+tags: ["python", "variables", "data-types", "beginner"]
+author: "All About CS"
+published: true
+---
+
+# Python Variables and Data Types
+
+Variables are the foundation of every program. They give meaningful names to the data your code works with — think of them as **labeled containers** that hold values in memory.
+
+<YouTubeEmbed id="dQw4w9WgXcQ" title="Python Variables and Data Types" />
+
+## Key Takeaways
+
+- A **variable** is a name that references a value stored in memory
+- Python is **dynamically typed** — you don't declare types explicitly
+- The `type()` function reveals the data type of any value
+- Python ships with a rich set of **built-in types** covering text, numbers, collections, and more
+
+## Creating Variables
+
+In Python, you create a variable simply by assigning a value with `=`:
+
+```python
+# Variables are created on assignment — no type declaration needed
+name = "Ada Lovelace"
+age = 36
+pi = 3.14159
+is_programmer = True
+```
+
+Python figures out the type automatically. This is called **dynamic typing**.
+
+## Variable Naming Rules
+
+Not every name is valid. Python enforces these rules:
+
+1. Names can contain **letters, digits, and underscores**
+2. Names **cannot start with a digit** — `1score` is invalid, `score1` is fine
+3. **No spaces** — use underscores instead (`my_variable`, not `my variable`)
+4. Names **cannot be Python keywords** like `if`, `class`, `return`, or `True`
+5. Names are **case-sensitive** — `Score`, `score`, and `SCORE` are three different variables
+
+```python
+# Valid names
+user_name = "Alice"
+total_score_2 = 98
+_private_flag = True
+
+# Invalid names (these would cause SyntaxError)
+# 2nd_place = "Bob"    — starts with a digit
+# my variable = 10     — contains a space
+# class = "Math"       — 'class' is a reserved keyword
+```
+
+> 🖼️ **Visual Suggestion:** A quick-reference table of Python's reserved keywords.
+
+## Checking Types with `type()`
+
+The built-in `type()` function tells you exactly what kind of data a variable holds:
+
+```python
+x = 42
+print(type(x))  # <class 'int'>
+
+y = "hello"
+print(type(y))  # <class 'str'>
+
+z = 3.14
+print(type(z))  # <class 'float'>
+```
+
+## Python's Built-in Data Types
+
+Python provides a surprisingly rich collection of types out of the box. Here's the complete landscape:
+
+### Text and Boolean
+
+| Type | Example | Description |
+|------|---------|-------------|
+| `str` | `"hello"` | Sequence of characters |
+| `bool` | `True` / `False` | Logical truth values |
+
+### Numeric Types
+
+| Type | Example | Description |
+|------|---------|-------------|
+| `int` | `42` | Whole numbers of arbitrary size |
+| `float` | `3.14` | Decimal (floating-point) numbers |
+| `complex` | `2 + 3j` | Complex numbers with real and imaginary parts |
+
+### Collection Types
+
+| Type | Example | Mutable? |
+|------|---------|----------|
+| `list` | `[1, 2, 3]` | Yes |
+| `tuple` | `(1, 2, 3)` | No |
+| `dict` | `{"a": 1}` | Yes |
+| `set` | `{1, 2, 3}` | Yes |
+| `frozenset` | `frozenset({1, 2})` | No |
+
+### Other Notable Types
+
+- **`range`** — represents an immutable sequence of numbers, commonly used in loops
+- **`bytes`** / **`bytearray`** — raw binary data (immutable and mutable, respectively)
+- **`memoryview`** — memory-efficient access to binary data without copying
+
+## Comprehensive Code Example
+
+```python
+# Text
+greeting = "Hello, Python!"
+print(type(greeting))       # <class 'str'>
+
+# Numbers
+count = 100
+temperature = 36.6
+imaginary = 4 + 5j
+print(type(count))          # <class 'int'>
+print(type(temperature))    # <class 'float'>
+print(type(imaginary))      # <class 'complex'>
+
+# Boolean
+is_active = True
+print(type(is_active))      # <class 'bool'>
+
+# Collections
+fruits = ["apple", "banana", "cherry"]       # list (mutable, ordered)
+coordinates = (10.0, 20.0)                   # tuple (immutable, ordered)
+unique_ids = {101, 102, 103}                 # set (mutable, unordered, unique)
+profile = {"name": "Ada", "age": 36}         # dict (mutable, key-value pairs)
+
+# Range and bytes
+numbers = range(1, 11)       # represents 1 through 10
+raw_data = b"hello"          # immutable bytes literal
+print(type(numbers))         # <class 'range'>
+print(type(raw_data))        # <class 'bytes'>
+```
+
+> 🖼️ **Visual Suggestion:** A diagram grouping Python data types into categories — numeric, sequence, mapping, set, and binary.
+
+## Dynamic Typing in Action
+
+Because Python is dynamically typed, a variable can be reassigned to a completely different type:
+
+```python
+value = 10          # int
+value = "ten"       # now it's a str — no error
+value = [10, 20]    # now it's a list
+```
+
+This flexibility is powerful but demands discipline. Use clear variable names so the intended type is always obvious.
+
+---
+
+*Up next: we'll dive deeper into Python's most versatile data type — **strings and their powerful built-in methods**.*

@@ -1,0 +1,252 @@
+---
+title: "Python Loops — while, for, and Loop Control"
+description: "A comprehensive guide to Python loops — master while loops, for loops, range(), loop control statements, and nested iterations with practical examples."
+date: "2026-03-01"
+youtubeId: "dQw4w9WgXcQ"
+tags: ["python", "loops", "for-loop", "while-loop", "beginner", "control-flow"]
+author: "All About CS"
+published: true
+---
+
+# Python Loops — while, for, and Loop Control
+
+Repetition is at the heart of computing. Whether you are processing every item in a dataset, waiting for user input, or counting to a billion, **loops** give Python the ability to execute a block of code multiple times without duplicating a single line.
+
+<YouTubeEmbed id="dQw4w9WgXcQ" title="Python Loops — while, for, and Loop Control" />
+
+## Key Takeaways
+
+- **while loops** repeat as long as a condition remains `True` — ideal when the number of iterations is unknown upfront
+- **for loops** iterate over a known sequence (list, string, range) — the workhorse of Python iteration
+- The `range()` function generates numeric sequences for counted loops
+- `break`, `continue`, and `pass` give you fine-grained control over loop execution
+- **Nested loops** let you work with multi-dimensional data but increase complexity quickly
+
+---
+
+## While Loops — Indefinite Iteration
+
+A **while loop** checks its condition *before* each iteration. If the condition is `True`, the body executes; if `False`, the loop ends.
+
+```python
+count = 0
+
+while count < 5:
+    print(f"Count is {count}")
+    count += 1
+# Output: Count is 0, 1, 2, 3, 4
+```
+
+### Summing Numbers 1 through 10
+
+```python
+total = 0
+number = 1
+
+while number <= 10:
+    total += number
+    number += 1
+
+print(f"Sum of 1–10: {total}")  # 55
+```
+
+### Mini-Project — Password Matcher
+
+A practical use of `while`: keep prompting until the user enters the correct password.
+
+```python
+correct_password = "python123"
+attempt = ""
+
+while attempt != correct_password:
+    attempt = input("Enter the password: ")
+
+print("Access granted!")
+```
+
+> 🖼️ **Visual Suggestion:** A flowchart showing the while-loop cycle — condition check → body execution → condition re-check → exit.
+
+### Avoiding Infinite Loops
+
+If the condition never becomes `False`, the loop runs forever and your program hangs. The most common cause is forgetting to update the loop variable.
+
+```python
+# DANGER — this loop never ends because i is never incremented
+i = 0
+while i < 5:
+    print(i)
+    # i += 1  ← missing this line creates an infinite loop
+```
+
+Always verify that something inside the loop moves the condition toward `False`.
+
+---
+
+## For Loops — Definite Iteration
+
+A **for loop** iterates directly over items in a sequence. You don't manage a counter variable — Python handles it for you.
+
+```python
+fruits = ["apple", "banana", "cherry"]
+
+for fruit in fruits:
+    print(fruit)
+# Output: apple, banana, cherry
+```
+
+### Filtering with a Condition
+
+Combine a for loop with `if` to process only items that match a criterion.
+
+```python
+numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+even_numbers = []
+for n in numbers:
+    if n % 2 == 0:
+        even_numbers.append(n)
+
+print(even_numbers)  # [2, 4, 6, 8, 10]
+```
+
+### Iterating Over Strings
+
+Strings are sequences of characters, so `for` works on them naturally.
+
+```python
+for char in "Python":
+    print(char, end=" ")
+# Output: P y t h o n
+```
+
+### Iterating Over Dictionaries
+
+By default, iterating a dictionary yields its **keys**. Use `.items()` to get both keys and values.
+
+```python
+student = {"name": "Alice", "age": 22, "major": "CS"}
+
+for key, value in student.items():
+    print(f"{key}: {value}")
+# name: Alice
+# age: 22
+# major: CS
+```
+
+> 🖼️ **Visual Suggestion:** A diagram showing a for loop pointer moving through each element in a list, one step per iteration.
+
+### The `range()` Function
+
+**`range()`** generates a sequence of integers on the fly — essential for counted loops.
+
+| Form | Produces | Example |
+|------|----------|---------|
+| `range(n)` | 0 to n−1 | `range(5)` → 0, 1, 2, 3, 4 |
+| `range(start, stop)` | start to stop−1 | `range(2, 6)` → 2, 3, 4, 5 |
+| `range(start, stop, step)` | start to stop−1, incrementing by step | `range(0, 10, 2)` → 0, 2, 4, 6, 8 |
+
+```python
+# Print the first five squares
+for i in range(1, 6):
+    print(f"{i}² = {i ** 2}")
+# 1² = 1, 2² = 4, 3² = 9, 4² = 16, 5² = 25
+```
+
+---
+
+## Loop Control Statements
+
+Python provides three keywords to alter the normal flow of a loop.
+
+### `break` — Exit Immediately
+
+`break` terminates the loop entirely, regardless of the condition.
+
+```python
+for num in range(1, 100):
+    if num == 7:
+        print(f"Found it: {num}")
+        break
+# Only prints "Found it: 7" — the loop stops at 7
+```
+
+### `continue` — Skip to Next Iteration
+
+`continue` skips the rest of the current iteration and jumps back to the loop's condition check.
+
+```python
+for num in range(1, 11):
+    if num % 3 == 0:
+        continue  # skip multiples of 3
+    print(num, end=" ")
+# Output: 1 2 4 5 7 8 10
+```
+
+### `pass` — Do Nothing (Placeholder)
+
+`pass` is a syntactic no-op. Use it when a block is required by Python's grammar but you have nothing to execute yet.
+
+```python
+for item in range(5):
+    pass  # implementation pending — loop body cannot be empty
+```
+
+> 🖼️ **Visual Suggestion:** Three side-by-side flowcharts illustrating how `break`, `continue`, and `pass` alter the normal loop flow.
+
+---
+
+## Nested Loops
+
+A loop inside another loop creates a **nested loop**. The inner loop runs to completion for *every single iteration* of the outer loop.
+
+```python
+for row in range(1, 4):
+    for col in range(1, 4):
+        print(f"({row},{col})", end="  ")
+    print()  # newline after each row
+# (1,1)  (1,2)  (1,3)
+# (2,1)  (2,2)  (2,3)
+# (3,1)  (3,2)  (3,3)
+```
+
+### Multiplication Table
+
+A classic nested-loop exercise:
+
+```python
+size = 5
+for i in range(1, size + 1):
+    for j in range(1, size + 1):
+        print(f"{i * j:4}", end="")
+    print()
+```
+
+Output:
+
+```
+   1   2   3   4   5
+   2   4   6   8  10
+   3   6   9  12  15
+   4   8  12  16  20
+   5  10  15  20  25
+```
+
+Keep in mind that nested loops multiply the iteration count. Two loops of *n* each produce *n²* total iterations — something to watch when working with large datasets.
+
+---
+
+## Quick Reference
+
+| Concept | When to Use |
+|---------|-------------|
+| `while` | Unknown iteration count — repeat until a condition changes |
+| `for` | Known sequence — iterate over each element |
+| `range()` | Generate a numeric sequence for counted loops |
+| `break` | Stop the loop early when a goal is met |
+| `continue` | Skip the current item and move to the next |
+| `pass` | Placeholder for an empty loop body |
+| Nested loops | Multi-dimensional iteration (grids, combinations) |
+
+---
+
+*Up next: we'll combine loops with **functions** — learning how to package reusable logic and keep your code clean.*
