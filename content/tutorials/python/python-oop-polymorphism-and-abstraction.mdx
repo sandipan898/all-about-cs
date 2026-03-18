@@ -1,0 +1,356 @@
+---
+title: "Object-Oriented Programming in Python — Part 3: Polymorphism and Abstraction"
+description: "Complete the four pillars of OOP — learn polymorphism (operator overloading, method overriding, class polymorphism), abstraction (abstract base classes), and Pythonic Duck Typing with practical examples."
+date: "2026-03-14"
+youtubeId: "VIDEO_ID_OOP_P3"
+tags: ["python", "oop", "polymorphism", "abstraction", "duck-typing", "abc", "intermediate"]
+author: "All About CS"
+published: true
+---
+
+<SeriesNavigation seriesName="Object-Oriented Programming in Python" currentPart="3" totalParts="3" slugs="python-oop-classes-and-objects, python-oop-encapsulation-and-inheritance, python-oop-polymorphism-and-abstraction" />
+
+<TableOfContents />
+
+# Object-Oriented Programming in Python — Part 3: Polymorphism and Abstraction
+
+This is the final part of our OOP series. In Parts 1 and 2, we covered classes, objects, encapsulation, and inheritance. Now we complete the picture with the remaining two pillars: **Polymorphism** (one interface, many forms) and **Abstraction** (hiding complexity). We'll also explore Python's unique take on typing — **Duck Typing**.
+
+<YouTubeEmbed id="VIDEO_ID_OOP_P3" title="OOP in Python — Part 3: Polymorphism and Abstraction" />
+
+---
+
+## Polymorphism — Many Forms, One Interface
+
+The word **polymorphism** comes from Greek: *poly* (many) + *morph* (form). In programming, it means the same operation can behave differently depending on the context.
+
+Think of a person: a father at home, an employee at work, a friend at a party. Same person, different behavior depending on the situation. That's polymorphism.
+
+Python implements polymorphism in several ways.
+
+---
+
+### 1. Operator Overloading
+
+The same operator performs different operations depending on the **operand types**:
+
+```python
+# With numbers: arithmetic addition
+a = 10
+b = 20
+print(a + b)      # → 30
+
+# With strings: concatenation
+str1 = "Hello "
+str2 = "Python"
+print(str1 + str2)  # → Hello Python
+
+# With lists: merging
+list1 = [1, 2]
+list2 = [3, 4]
+print(list1 + list2)  # → [1, 2, 3, 4]
+```
+
+The `+` operator does three completely different things — addition, concatenation, and list merging — depending on what's on either side of it. Python decides which behavior to use at runtime.
+
+---
+
+### 2. Class Polymorphism (Runtime Polymorphism)
+
+Different classes can have **methods with the same name** that behave differently:
+
+```python
+class Bird:
+    def speak(self):
+        print("Chirp chirp!")
+
+class Dog:
+    def speak(self):
+        print("Woof woof!")
+
+class Cat:
+    def speak(self):
+        print("Meow!")
+
+def animal_speak(animal):
+    animal.speak()
+
+bird = Bird()
+dog = Dog()
+cat = Cat()
+
+animal_speak(bird)  # → Chirp chirp!
+animal_speak(dog)   # → Woof woof!
+animal_speak(cat)   # → Meow!
+```
+
+The `animal_speak()` function doesn't care what type of object it receives — it just calls `.speak()`. The actual behavior depends entirely on the object passed in. This is **runtime polymorphism** because the method that executes is determined at the time of the function call.
+
+<Callout type="info">
+**No inheritance required.** Notice that `Bird`, `Dog`, and `Cat` are completely independent classes — they don't share a parent. Polymorphism in Python doesn't require a class hierarchy. If the object has the right method, it works. This is a key difference from languages like Java or C++.
+</Callout>
+
+---
+
+### 3. Method Overloading (via Default Arguments)
+
+Method overloading means having multiple methods with the **same name but different parameters**. Python doesn't support this natively (defining a second method with the same name simply replaces the first), but you can mimic it with **default arguments**:
+
+```python
+class Calculator:
+    def add(self, a, b=0, c=0):
+        return a + b + c
+
+calc = Calculator()
+
+print(calc.add(10))          # → 10  (one argument)
+print(calc.add(10, 20))      # → 30  (two arguments)
+print(calc.add(10, 20, 30))  # → 60  (three arguments)
+```
+
+The single `add` method handles one, two, or three arguments by giving `b` and `c` default values of `0`. The behavior changes based on how many arguments the caller provides.
+
+---
+
+### 4. Method Overriding (Review)
+
+We covered this in Part 2. A child class redefines a method it inherited from a parent class:
+
+```python
+class Animal:
+    def speak(self):
+        print("Some generic sound")
+
+class Dog(Animal):
+    def speak(self):
+        print("Woof!")
+
+dog = Dog()
+dog.speak()  # → Woof! (overridden version)
+```
+
+This is another form of polymorphism — the same method name (`speak`) behaves differently depending on which class the object belongs to.
+
+---
+
+## Abstraction — Hiding the Complexity
+
+Abstraction means showing **only what's necessary** and hiding the internal details. Think about driving a car: you interact with the steering wheel, pedals, and gear shift. You don't need to understand fuel injection, combustion cycles, or brake hydraulics. The complex internals are **abstracted away**.
+
+In Python, we implement abstraction using **Abstract Base Classes (ABC)** from the `abc` module.
+
+### Abstract Classes and Methods
+
+An abstract class is a class that:
+- **Cannot be instantiated** directly — you can't create objects from it.
+- Contains one or more **abstract methods** — methods that are declared but have no implementation.
+- Forces subclasses to **override** the abstract methods with their own implementations.
+
+```python
+from abc import ABC, abstractmethod
+
+class Shape(ABC):
+    @abstractmethod
+    def area(self):
+        pass
+
+    @abstractmethod
+    def perimeter(self):
+        pass
+```
+
+`Shape` defines a contract: any class that inherits from `Shape` **must** implement `area()` and `perimeter()`. If it doesn't, Python raises a `TypeError` when you try to create an object.
+
+### Implementing Abstract Methods
+
+```python
+class Circle(Shape):
+    def __init__(self, radius):
+        self.radius = radius
+
+    def area(self):
+        return 3.14159 * self.radius ** 2
+
+    def perimeter(self):
+        return 2 * 3.14159 * self.radius
+
+class Square(Shape):
+    def __init__(self, side):
+        self.side = side
+
+    def area(self):
+        return self.side ** 2
+
+    def perimeter(self):
+        return 4 * self.side
+```
+
+```python
+circle = Circle(5)
+square = Square(4)
+
+print(f"Circle — Area: {circle.area():.2f}, Perimeter: {circle.perimeter():.2f}")
+# → Circle — Area: 78.54, Perimeter: 31.42
+
+print(f"Square — Area: {square.area()}, Perimeter: {square.perimeter()}")
+# → Square — Area: 16, Perimeter: 16
+```
+
+The users of `Circle` and `Square` don't need to know the formulas — they just call `.area()` and `.perimeter()`. The **implementation details are hidden** behind a clean interface.
+
+### What Happens If You Skip an Abstract Method?
+
+```python
+class Triangle(Shape):
+    def __init__(self, base, height):
+        self.base = base
+        self.height = height
+
+    def area(self):
+        return 0.5 * self.base * self.height
+
+    # Forgot to implement perimeter()!
+
+triangle = Triangle(3, 4)
+# TypeError: Can't instantiate abstract class Triangle
+#   with abstract method perimeter
+```
+
+Python enforces the contract. You can't create an object from `Triangle` until it implements every abstract method declared in `Shape`.
+
+<Callout type="info">
+**Abstract classes can have concrete methods too.** Not every method needs to be abstract. You can mix abstract methods (that subclasses must override) with regular methods (that provide shared functionality). This gives you both flexibility and enforcement.
+</Callout>
+
+---
+
+## Duck Typing — Python's Pragmatic Philosophy
+
+Python has a famous philosophy: **"If it walks like a duck and quacks like a duck, it's a duck."**
+
+In practice, this means Python doesn't care about an object's **type** — it only cares about its **behavior**. If an object has the right method, it's good enough:
+
+```python
+class Duck:
+    def quack(self):
+        print("Quack!")
+
+class Person:
+    def quack(self):
+        print("I'm imitating a duck!")
+
+class RubberDuck:
+    def quack(self):
+        print("Squeak!")
+
+def make_it_quack(thing):
+    thing.quack()
+
+make_it_quack(Duck())        # → Quack!
+make_it_quack(Person())      # → I'm imitating a duck!
+make_it_quack(RubberDuck())  # → Squeak!
+```
+
+`make_it_quack()` never checks `isinstance()` or class names. It simply calls `.quack()`. If the object has that method, it works. If it doesn't, Python raises an `AttributeError` — but only at runtime.
+
+**Duck typing is the default in Python.** It's why polymorphism works without inheritance and why Python code tends to be more flexible (and more concise) than equivalent Java or C++ code.
+
+---
+
+## The Four Pillars — Summary
+
+| Pillar | Purpose | Python Mechanism |
+|--------|---------|-----------------|
+| **Encapsulation** | Protect internal state | Private attributes (`__`), getters/setters |
+| **Inheritance** | Reuse code across related classes | `class Child(Parent):` |
+| **Polymorphism** | Same interface, different behavior | Operator overloading, method overriding, class polymorphism |
+| **Abstraction** | Hide complexity, expose interface | Abstract Base Classes (`ABC`, `@abstractmethod`) |
+
+---
+
+## Complete Example: A Plugin System
+
+Here's a real-world pattern that uses all four pillars:
+
+```python
+from abc import ABC, abstractmethod
+
+class Plugin(ABC):
+    """Abstract base class for all plugins."""
+
+    def __init__(self, name):
+        self.__name = name          # Encapsulation
+
+    @property
+    def name(self):
+        return self.__name
+
+    @abstractmethod
+    def execute(self, data):        # Abstraction
+        pass
+
+    def __str__(self):
+        return f"Plugin({self.name})"
+
+
+class UpperCasePlugin(Plugin):      # Inheritance
+    def execute(self, data):        # Polymorphism
+        return data.upper()
+
+class ReversePlugin(Plugin):        # Inheritance
+    def execute(self, data):        # Polymorphism
+        return data[::-1]
+
+class CensorPlugin(Plugin):         # Inheritance
+    def __init__(self, name, bad_words):
+        super().__init__(name)
+        self.__bad_words = bad_words  # Encapsulation
+
+    def execute(self, data):          # Polymorphism
+        result = data
+        for word in self.__bad_words:
+            result = result.replace(word, "***")
+        return result
+
+
+def run_pipeline(plugins, text):
+    """Run text through a series of plugins."""
+    for plugin in plugins:
+        text = plugin.execute(text)    # Duck typing / Polymorphism
+        print(f"  [{plugin.name}] → {text}")
+    return text
+
+
+pipeline = [
+    CensorPlugin("Censor", ["bad", "ugly"]),
+    UpperCasePlugin("Uppercase"),
+    ReversePlugin("Reverse"),
+]
+
+print("Processing pipeline:")
+result = run_pipeline(pipeline, "This bad text is ugly but fixable")
+print(f"\nFinal: {result}")
+```
+
+Output:
+
+```
+Processing pipeline:
+  [Censor] → This *** text is *** but fixable
+  [Uppercase] → THIS *** TEXT IS *** BUT FIXABLE
+  [Reverse] → ELBAXIF TUB *** SI TXET *** SIHT
+
+Final: ELBAXIF TUB *** SI TXET *** SIHT
+```
+
+---
+
+## What's Next?
+
+You now have a solid understanding of all four pillars of Object-Oriented Programming in Python. These patterns will appear in every non-trivial Python project you work on — from web frameworks to data pipelines to machine learning systems.
+
+In the next tutorial, we'll explore **Regular Expressions** — Python's powerful tool for pattern matching, text validation, and data extraction.
+
+*Happy coding. 🐍*
+
+<SeriesNavigation seriesName="Object-Oriented Programming in Python" currentPart="3" totalParts="3" slugs="python-oop-classes-and-objects, python-oop-encapsulation-and-inheritance, python-oop-polymorphism-and-abstraction" />

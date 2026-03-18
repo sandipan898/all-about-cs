@@ -1,0 +1,274 @@
+---
+title: "Object-Oriented Programming in Python — Part 1: Classes and Objects"
+description: "Learn the foundations of OOP in Python — what classes and objects are, how to define attributes and methods, the __init__ constructor, the self keyword, and how to create and modify object instances."
+date: "2026-03-12"
+youtubeId: "VIDEO_ID_OOP_P1"
+tags: ["python", "oop", "classes", "objects", "constructor", "self", "beginners"]
+author: "All About CS"
+published: true
+---
+
+<SeriesNavigation seriesName="Object-Oriented Programming in Python" currentPart="1" totalParts="3" slugs="python-oop-classes-and-objects, python-oop-encapsulation-and-inheritance, python-oop-polymorphism-and-abstraction" />
+
+<TableOfContents />
+
+# Object-Oriented Programming in Python — Part 1: Classes and Objects
+
+Object-Oriented Programming (OOP) is one of Python's most powerful features. It lets you model real-world entities as **objects** — bundles of data and behavior that interact with each other. Instead of writing long, procedural scripts, OOP helps you organize code into reusable, self-contained units.
+
+In this first part of a three-part series, we'll cover the building blocks: **classes**, **objects**, the **`__init__` constructor**, and the **`self` keyword**.
+
+<YouTubeEmbed id="VIDEO_ID_OOP_P1" title="OOP in Python — Part 1: Classes and Objects" />
+
+---
+
+## What Are Classes and Objects?
+
+Think of a **class** as a **blueprint** and an **object** as a **building** constructed from that blueprint.
+
+- A **class** defines the structure: what data an entity holds (attributes) and what it can do (methods).
+- An **object** is a specific instance of that class, with its own unique data.
+
+```
+Class: Car (blueprint)
+  ├── Attributes: make, model, year
+  └── Methods: display_info()
+
+Object: car1 = Car("Toyota", "Corolla", 2020)
+Object: car2 = Car("BMW", "X1", 2023)
+```
+
+You can create as many objects as you want from a single class. Each one is independent — changing one object doesn't affect the others.
+
+---
+
+## Defining Your First Class
+
+In Python, classes are defined with the `class` keyword:
+
+```python
+class Car:
+    def __init__(self, make, model, year):
+        self.make = make
+        self.model = model
+        self.year = year
+
+    def display_info(self):
+        print(f"Car Info: {self.year} {self.make} {self.model}")
+```
+
+Let's break this down:
+
+- **`class Car:`** — declares a new class named `Car`.
+- **`def __init__(self, make, model, year):`** — the **constructor method**. It runs automatically every time you create a new `Car` object.
+- **`self.make = make`** — stores the `make` argument as an **instance attribute** on the object.
+- **`def display_info(self):`** — a regular **method** that belongs to the class. It can access attributes via `self`.
+
+---
+
+## The `__init__` Constructor
+
+The `__init__` method (short for "initialize") is special. Python calls it **automatically** when you create a new object. Its job is to set up the object's initial state:
+
+```python
+car1 = Car("Toyota", "Corolla", 2020)
+```
+
+When this line executes:
+
+1. Python creates a new `Car` object in memory.
+2. It calls `__init__` with `self` pointing to the new object, plus the three arguments.
+3. The constructor assigns `"Toyota"` to `self.make`, `"Corolla"` to `self.model`, and `2020` to `self.year`.
+4. The fully initialized object is assigned to the variable `car1`.
+
+<Callout type="info">
+**`__init__` is not technically a constructor** in the strictest sense — `__new__` actually creates the object. But `__init__` is where you set up attributes, and in practice, everyone calls it the constructor. You'll write `__init__` in virtually every class you create.
+</Callout>
+
+---
+
+## The `self` Keyword
+
+`self` is the most important concept to grasp in Python OOP. It refers to **the specific object** that's calling the method.
+
+```python
+car1 = Car("Toyota", "Corolla", 2020)
+car2 = Car("BMW", "X1", 2023)
+
+car1.display_info()  # → Car Info: 2020 Toyota Corolla
+car2.display_info()  # → Car Info: 2023 BMW X1
+```
+
+Both objects call the same `display_info()` method, but they print different data. That's because `self` refers to `car1` in the first call and `car2` in the second.
+
+**Key rules about `self`:**
+
+- It must be the **first parameter** of every instance method.
+- You **never pass it explicitly** when calling a method — Python handles it.
+- It's how an object accesses **its own** attributes and methods.
+
+```python
+class Dog:
+    def __init__(self, name, breed, age):
+        self.name = name
+        self.breed = breed
+        self.age = age
+
+    def bark(self):
+        print(f"{self.name} says Bow!")
+
+    def get_age(self):
+        return self.age
+```
+
+```python
+dog1 = Dog("Buddy", "Golden Retriever", 3)
+
+print(f"{dog1.name} is {dog1.get_age()} years old.")
+# → Buddy is 3 years old.
+
+dog1.bark()
+# → Buddy says Bow!
+```
+
+---
+
+## Attributes and Methods — The Two Pillars
+
+Every class is built from two kinds of members:
+
+| Component | What It Is | Example |
+|-----------|-----------|---------|
+| **Attribute** | A variable that holds data about the object | `self.name`, `self.age` |
+| **Method** | A function that defines behavior for the object | `bark()`, `get_age()` |
+
+Attributes represent **state** (what the object *is*). Methods represent **behavior** (what the object *does*).
+
+---
+
+## Creating Multiple Objects
+
+A class is a template — you can stamp out as many objects as you need:
+
+```python
+dog1 = Dog("Buddy", "Golden Retriever", 3)
+dog2 = Dog("Max", "German Shepherd", 5)
+dog3 = Dog("Charlie", "Beagle", 2)
+
+for dog in [dog1, dog2, dog3]:
+    print(f"{dog.name} ({dog.breed}) - Age: {dog.age}")
+    dog.bark()
+```
+
+Output:
+
+```
+Buddy (Golden Retriever) - Age: 3
+Buddy says Bow!
+Max (German Shepherd) - Age: 5
+Max says Bow!
+Charlie (Beagle) - Age: 2
+Charlie says Bow!
+```
+
+Each object is independent. Changing `dog1.age` doesn't affect `dog2.age`.
+
+---
+
+## Modifying Object Attributes
+
+Once an object is created, you can change its attributes in two ways.
+
+### Method 1: Using a Setter Method
+
+Define a method specifically for updating an attribute:
+
+```python
+class Dog:
+    def __init__(self, name, breed, age):
+        self.name = name
+        self.breed = breed
+        self.age = age
+
+    def update_age(self, new_age):
+        self.age = new_age
+
+    def get_info(self):
+        return f"{self.name} is {self.age} years old."
+
+dog = Dog("Buddy", "Golden Retriever", 3)
+print(dog.get_info())  # → Buddy is 3 years old.
+
+dog.update_age(4)
+print(dog.get_info())  # → Buddy is 4 years old.
+```
+
+### Method 2: Direct Assignment
+
+You can also modify attributes directly through the object reference:
+
+```python
+dog.age = 5
+print(dog.get_info())  # → Buddy is 5 years old.
+```
+
+<Callout type="info">
+**Which approach should you use?** Setter methods are preferred in professional code because they let you add **validation logic** (e.g., "age must be positive") and maintain control over how attributes change. Direct assignment is fine for simple cases, but it bypasses any safeguards.
+</Callout>
+
+---
+
+## Putting It All Together
+
+Here's a complete, practical example — a `BankAccount` class that demonstrates everything covered in this part:
+
+```python
+class BankAccount:
+    def __init__(self, owner, balance=0):
+        self.owner = owner
+        self.balance = balance
+
+    def deposit(self, amount):
+        if amount > 0:
+            self.balance += amount
+            print(f"Deposited ₹{amount}. New balance: ₹{self.balance}")
+        else:
+            print("Deposit amount must be positive.")
+
+    def withdraw(self, amount):
+        if amount > self.balance:
+            print(f"Insufficient funds. Available: ₹{self.balance}")
+        elif amount <= 0:
+            print("Withdrawal amount must be positive.")
+        else:
+            self.balance -= amount
+            print(f"Withdrew ₹{amount}. New balance: ₹{self.balance}")
+
+    def get_balance(self):
+        return self.balance
+
+    def __str__(self):
+        return f"Account({self.owner}, Balance: ₹{self.balance})"
+
+
+account = BankAccount("Alice", 1000)
+print(account)            # → Account(Alice, Balance: ₹1000)
+
+account.deposit(500)      # → Deposited ₹500. New balance: ₹1500
+account.withdraw(200)     # → Withdrew ₹200. New balance: ₹1300
+account.withdraw(5000)    # → Insufficient funds. Available: ₹1300
+```
+
+---
+
+## What We Covered
+
+- **Classes** are blueprints that define attributes and methods.
+- **Objects** are instances created from those blueprints.
+- **`__init__`** is the constructor that initializes object state.
+- **`self`** refers to the calling object, keeping each instance's data separate.
+- Attributes can be modified through **setter methods** or **direct assignment**.
+
+In **Part 2**, we'll explore the first two pillars of OOP: **Encapsulation** (protecting data with private attributes) and **Inheritance** (reusing code across related classes).
+
+<SeriesNavigation seriesName="Object-Oriented Programming in Python" currentPart="1" totalParts="3" slugs="python-oop-classes-and-objects, python-oop-encapsulation-and-inheritance, python-oop-polymorphism-and-abstraction" />

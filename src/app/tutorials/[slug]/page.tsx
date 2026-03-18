@@ -10,6 +10,8 @@ import {
 import { DualModeLayout } from "@/components/dual-mode-layout";
 import { YouTubeEmbed } from "@/components/youtube-embed";
 import { Callout } from "@/components/callout";
+import { TableOfContents } from "@/components/table-of-contents";
+import { SeriesNavigation } from "@/components/series-navigation";
 import { JsonLd } from "@/components/json-ld";
 
 interface TutorialPageProps {
@@ -25,6 +27,8 @@ function InlineYouTubeEmbed(props: { id: string; title?: string }) {
 const mdxComponents = {
   YouTubeEmbed: InlineYouTubeEmbed,
   Callout,
+  TableOfContents,
+  SeriesNavigation,
 };
 
 // ── Static Params ──────────────────────────────────────────────────

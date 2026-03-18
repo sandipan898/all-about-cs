@@ -1,0 +1,382 @@
+---
+title: "Python Dictionaries: Operations and Patterns (Part 2 of 3)"
+description: "Master essential dictionary operations — adding and updating entries, iterating by keys, values, and items, nested dictionaries, dictionary comprehensions, and membership testing."
+date: "2026-02-10"
+youtubeId: "dJ_MW89pH_k"
+tags: ["python", "dictionaries", "data-structures", "beginner"]
+author: "All About CS"
+published: true
+---
+
+<SeriesNavigation seriesName="Python Dictionaries" currentPart="2" totalParts="3" slugs="python-dictionaries-basics, python-dictionaries-operations, python-dictionaries-methods" />
+
+<TableOfContents />
+
+# Python Dictionaries: Operations and Patterns
+
+In Part 1, we covered what dictionaries are and how to create them. Now it is time to put them to work. This part focuses on the **operations** you will use daily — mutating dictionaries, looping through them efficiently, building nested structures, and writing concise dictionary comprehensions.
+
+<YouTubeEmbed id="dJ_MW89pH_k" title="Python Dictionaries: Operations and Patterns" />
+
+## Adding and Updating Entries
+
+Dictionaries are **mutable**, so you can add new key-value pairs and update existing ones at any time using square-bracket assignment.
+
+### Adding a New Entry
+
+If the key does not exist, the assignment creates it:
+
+```python
+profile = {"name": "Meera", "age": 25}
+
+profile["city"] = "Mumbai"
+print(profile)
+# {'name': 'Meera', 'age': 25, 'city': 'Mumbai'}
+```
+
+### Updating an Existing Entry
+
+If the key already exists, the assignment **overwrites** the old value:
+
+```python
+profile["age"] = 26
+print(profile)
+# {'name': 'Meera', 'age': 26, 'city': 'Mumbai'}
+```
+
+There is no separate "add" vs. "update" syntax — the same `dict[key] = value` statement handles both. Python checks whether the key exists and either creates or overwrites accordingly.
+
+### Adding Multiple Entries at Once
+
+For bulk updates, you can use the `.update()` method (covered in detail in Part 3) or the **merge operator** `|` introduced in Python 3.9:
+
+```python
+profile = {"name": "Meera", "age": 25}
+extra = {"city": "Mumbai", "role": "Engineer"}
+
+# Using the | merge operator (Python 3.9+)
+merged = profile | extra
+print(merged)
+# {'name': 'Meera', 'age': 25, 'city': 'Mumbai', 'role': 'Engineer'}
+
+# Using |= for in-place merge
+profile |= extra
+print(profile)
+# {'name': 'Meera', 'age': 25, 'city': 'Mumbai', 'role': 'Engineer'}
+```
+
+<Callout type="info">
+The `|` and `|=` operators were added in **Python 3.9**. If you need to support older versions, use `.update()` or `{**dict1, **dict2}` unpacking instead.
+</Callout>
+
+## Deleting Entries
+
+There are several ways to remove entries from a dictionary:
+
+### Using `del`
+
+The `del` statement removes a key-value pair by key. It raises `KeyError` if the key does not exist:
+
+```python
+inventory = {"apples": 5, "bananas": 3, "cherries": 12}
+
+del inventory["bananas"]
+print(inventory)  # {'apples': 5, 'cherries': 12}
+
+# del inventory["grapes"]  # KeyError: 'grapes'
+```
+
+### Using `.pop()` (Preview)
+
+The `.pop()` method removes and **returns** the value, with an optional default to avoid errors. We cover this in full detail in Part 3.
+
+```python
+removed = inventory.pop("apples")
+print(removed)     # 5
+print(inventory)   # {'cherries': 12}
+```
+
+## Iterating Over Dictionaries
+
+Looping through dictionaries is something you will do constantly. Python gives you three clean patterns depending on whether you need keys, values, or both.
+
+### Iterating Over Keys (Default)
+
+When you loop over a dictionary directly, you get its **keys**:
+
+```python
+scores = {"Alice": 92, "Bob": 85, "Carol": 97}
+
+for name in scores:
+    print(name)
+# Alice
+# Bob
+# Carol
+```
+
+This is equivalent to calling `for name in scores.keys():`, but the shorter form is more idiomatic.
+
+### Iterating Over Values
+
+Use `.values()` when you only care about the values:
+
+```python
+for score in scores.values():
+    print(score)
+# 92
+# 85
+# 97
+```
+
+### Iterating Over Key-Value Pairs
+
+Use `.items()` to unpack both keys and values in each iteration — this is the most common pattern:
+
+```python
+for name, score in scores.items():
+    print(f"{name} scored {score}")
+# Alice scored 92
+# Bob scored 85
+# Carol scored 97
+```
+
+<Callout type="info">
+The `.keys()`, `.values()`, and `.items()` methods return **view objects**, not lists. Views are dynamic — they reflect changes to the dictionary in real time. If you need a static snapshot, wrap them with `list()`.
+</Callout>
+
+### Iterating with Enumeration
+
+You can combine `enumerate()` with dictionary iteration when you need a running count:
+
+```python
+for i, (name, score) in enumerate(scores.items(), start=1):
+    print(f"{i}. {name}: {score}")
+# 1. Alice: 92
+# 2. Bob: 85
+# 3. Carol: 97
+```
+
+### Iterating in Sorted Order
+
+Dictionaries maintain insertion order, but you can iterate in sorted order using `sorted()`:
+
+```python
+# Sort by key
+for name in sorted(scores):
+    print(f"{name}: {scores[name]}")
+# Alice: 92
+# Bob: 85
+# Carol: 97
+
+# Sort by value (descending)
+for name, score in sorted(scores.items(), key=lambda x: x[1], reverse=True):
+    print(f"{name}: {score}")
+# Carol: 97
+# Alice: 92
+# Bob: 85
+```
+
+## Nested Dictionaries
+
+Dictionaries can contain other dictionaries as values, enabling rich, hierarchical data structures. This is extremely common when working with JSON data, configuration files, and database records.
+
+### Basic Nesting
+
+```python
+university = {
+    "CS101": {
+        "title": "Intro to Programming",
+        "instructor": "Dr. Sharma",
+        "students": 120
+    },
+    "MA201": {
+        "title": "Linear Algebra",
+        "instructor": "Dr. Patel",
+        "students": 85
+    }
+}
+
+print(university["CS101"]["instructor"])  # 'Dr. Sharma'
+print(university["MA201"]["students"])    # 85
+```
+
+### Modifying Nested Values
+
+You chain square brackets to reach deeper levels:
+
+```python
+university["CS101"]["students"] = 125
+university["CS101"]["ta"] = "Ravi"
+
+print(university["CS101"])
+# {'title': 'Intro to Programming', 'instructor': 'Dr. Sharma', 'students': 125, 'ta': 'Ravi'}
+```
+
+### Iterating Over Nested Dictionaries
+
+```python
+for code, details in university.items():
+    print(f"\n{code}: {details['title']}")
+    print(f"  Instructor: {details['instructor']}")
+    print(f"  Enrolled: {details['students']}")
+```
+
+### Deep Nesting and Practical Limits
+
+You can nest as deeply as you like, but beyond 2–3 levels, consider using **classes** or **named tuples** for better readability:
+
+```python
+# This works, but gets unwieldy
+company = {
+    "engineering": {
+        "backend": {
+            "team_lead": "Ananya",
+            "members": ["Dev", "Sneha", "Kiran"]
+        }
+    }
+}
+print(company["engineering"]["backend"]["team_lead"])  # 'Ananya'
+```
+
+<Callout type="info">
+When working with deeply nested dictionaries (e.g., JSON API responses), consider using `.get()` chaining for safe access: `data.get("level1", {}).get("level2", {}).get("level3", "default")`. This avoids `KeyError` at any level.
+</Callout>
+
+## Dictionary Comprehensions
+
+Just like list comprehensions, Python supports **dictionary comprehensions** — a concise way to build dictionaries from iterables.
+
+### Basic Syntax
+
+```python
+{key_expr: value_expr for item in iterable}
+```
+
+### Examples
+
+```python
+# Squares of numbers 1–5
+squares = {n: n**2 for n in range(1, 6)}
+print(squares)  # {1: 1, 2: 4, 3: 9, 4: 16, 5: 25}
+
+# Invert a dictionary (swap keys and values)
+original = {"a": 1, "b": 2, "c": 3}
+inverted = {v: k for k, v in original.items()}
+print(inverted)  # {1: 'a', 2: 'b', 3: 'c'}
+
+# Convert a list to a dictionary with index keys
+fruits = ["apple", "banana", "cherry"]
+indexed = {i: fruit for i, fruit in enumerate(fruits)}
+print(indexed)  # {0: 'apple', 1: 'banana', 2: 'cherry'}
+```
+
+### With Conditions (Filtering)
+
+Add an `if` clause to filter which entries are included:
+
+```python
+scores = {"Alice": 92, "Bob": 65, "Carol": 97, "Dan": 58, "Eve": 88}
+
+# Only students who passed (score >= 70)
+passed = {name: score for name, score in scores.items() if score >= 70}
+print(passed)  # {'Alice': 92, 'Carol': 97, 'Eve': 88}
+```
+
+### Transforming Values
+
+```python
+prices_usd = {"laptop": 999, "phone": 699, "tablet": 449}
+
+# Convert to INR (1 USD = 83 INR)
+prices_inr = {item: price * 83 for item, price in prices_usd.items()}
+print(prices_inr)  # {'laptop': 82917, 'phone': 58017, 'tablet': 37267}
+```
+
+### Nested Comprehensions
+
+You can nest comprehensions, though readability suffers quickly:
+
+```python
+matrix = {
+    (r, c): r * c
+    for r in range(1, 4)
+    for c in range(1, 4)
+}
+print(matrix)
+# {(1, 1): 1, (1, 2): 2, (1, 3): 3, (2, 1): 2, (2, 2): 4, ...}
+```
+
+## Checking Membership with `in`
+
+The `in` keyword checks whether a **key** exists in a dictionary. It does **not** search values by default.
+
+```python
+settings = {"theme": "dark", "language": "en", "font_size": 14}
+
+print("theme" in settings)       # True
+print("color" in settings)       # False
+print("dark" in settings)        # False — "dark" is a value, not a key
+```
+
+### Checking for Values
+
+To check whether a value exists, search through `.values()`:
+
+```python
+print("dark" in settings.values())  # True
+print("en" in settings.values())    # True
+```
+
+### Using `not in`
+
+```python
+if "notifications" not in settings:
+    settings["notifications"] = True
+
+print(settings)
+# {'theme': 'dark', 'language': 'en', 'font_size': 14, 'notifications': True}
+```
+
+<Callout type="info">
+The `in` operator on dictionaries runs in **O(1)** average time because it checks the hash table directly. Checking `in` on a list is O(n). This makes dictionaries excellent for fast membership testing.
+</Callout>
+
+### Practical Pattern: Counting Occurrences
+
+Combining `in` with dictionary operations gives you a classic counting pattern:
+
+```python
+text = "hello world hello python hello"
+word_count = {}
+
+for word in text.split():
+    if word in word_count:
+        word_count[word] += 1
+    else:
+        word_count[word] = 1
+
+print(word_count)  # {'hello': 3, 'world': 1, 'python': 1}
+```
+
+A cleaner version uses `.get()` (covered in Part 3):
+
+```python
+word_count = {}
+for word in text.split():
+    word_count[word] = word_count.get(word, 0) + 1
+```
+
+## What We Covered
+
+In this part, you learned the core **operations** that make dictionaries a powerhouse:
+
+- **Adding and updating** entries with square-bracket assignment and the merge operator
+- **Deleting** entries with `del` and `.pop()`
+- **Iterating** by keys, values, and key-value pairs
+- **Nesting** dictionaries for hierarchical data
+- **Dictionary comprehensions** for concise construction and filtering
+- **Membership testing** with `in` for O(1) key lookups
+
+In **Part 3**, we do a deep dive into all **11 built-in dictionary methods** — `.clear()`, `.copy()`, `.fromkeys()`, `.get()`, `.items()`, `.keys()`, `.values()`, `.pop()`, `.popitem()`, `.setdefault()`, and `.update()` — with detailed examples and use cases for each.
+
+<SeriesNavigation seriesName="Python Dictionaries" currentPart="2" totalParts="3" slugs="python-dictionaries-basics, python-dictionaries-operations, python-dictionaries-methods" />

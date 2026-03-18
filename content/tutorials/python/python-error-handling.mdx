@@ -1,0 +1,360 @@
+---
+title: "Error Handling in Python: try, except, finally, and Custom Exceptions"
+description: "Learn to write crash-proof Python programs. This guide covers syntax errors, runtime exceptions, logical errors, and the full try-except-finally pattern — plus how to raise your own custom exceptions."
+date: "2026-03-11"
+youtubeId: "VIDEO_ID_ERROR_HANDLING"
+tags: ["python", "error-handling", "exceptions", "try-except", "beginners"]
+author: "All About CS"
+published: true
+---
+
+# Error Handling in Python: try, except, finally, and Custom Exceptions
+
+Bugs are inevitable. What separates amateur code from professional code isn't the absence of errors — it's how gracefully the program **handles** them. Python gives you a powerful toolkit for anticipating failures, catching them, and recovering cleanly — without your program crashing in front of users.
+
+This guide walks you through every type of Python error and the complete `try`/`except`/`finally` pattern, with practical examples you'll use in every project you build.
+
+<YouTubeEmbed id="VIDEO_ID_ERROR_HANDLING" title="Error Handling in Python: try, except, finally, and Custom Exceptions" />
+
+<TableOfContents />
+
+## The Three Types of Errors
+
+Before diving into handling, you need to recognize what you're dealing with. Python errors fall into three categories:
+
+| Type | When It Happens | Catchable? |
+|------|----------------|-----------|
+| **Syntax Error** | Before execution — during interpretation | No (fix the code) |
+| **Runtime Error (Exception)** | During execution — something unexpected occurs | Yes (`try`/`except`) |
+| **Logic Error** | Never crashes — just produces wrong results | No (debug and test) |
+
+---
+
+## Syntax Errors
+
+Syntax errors occur when your code violates Python's grammar rules. The interpreter catches these **before** your program runs:
+
+```python
+# Missing closing parenthesis
+print("Hello, world!"
+# SyntaxError: unexpected EOF while parsing
+```
+
+```python
+# Missing colon after if statement
+if True
+    print("yes")
+# SyntaxError: expected ':'
+```
+
+Python's error messages are surprisingly helpful here — they point to the exact line and often the exact character where the problem is. These errors are **not catchable** with `try`/`except` because the program never starts running in the first place.
+
+<Callout type="info">
+**Your editor is your first line of defense.** Modern editors like VS Code with the Python extension highlight syntax errors in real-time with red underlines — you'll see them before you even try to run the code.
+</Callout>
+
+---
+
+## Runtime Errors (Exceptions)
+
+Runtime errors — officially called **exceptions** — happen while your program is executing. Everything looks fine syntactically, but something unexpected occurs: dividing by zero, accessing a missing file, receiving invalid input.
+
+```python
+num1 = 10
+num2 = 0
+result = num1 / num2
+# ZeroDivisionError: division by zero
+```
+
+These are the most dangerous errors because they **crash your program** mid-execution. Imagine this scenario: a user enters `0` as a divisor in a calculator app. Without error handling, the entire application terminates.
+
+Common runtime exceptions you'll encounter:
+
+| Exception | Cause |
+|-----------|-------|
+| `ZeroDivisionError` | Dividing by zero |
+| `ValueError` | Wrong type of value (e.g., `int("abc")`) |
+| `TypeError` | Operation on incompatible types |
+| `FileNotFoundError` | File doesn't exist at the given path |
+| `IndexError` | List index out of range |
+| `KeyError` | Dictionary key doesn't exist |
+| `AttributeError` | Object doesn't have the requested attribute |
+| `ImportError` | Module can't be found or imported |
+
+---
+
+## The `try`/`except` Block
+
+The `try`/`except` block is Python's primary mechanism for catching and handling runtime exceptions:
+
+```python
+try:
+    # Code that might raise an error
+    num1 = 10
+    num2 = 0
+    result = num1 / num2
+    print(result)
+except:
+    print("Something went wrong.")
+```
+
+Instead of crashing, the program prints a friendly message and continues. The code inside `try` runs normally. If an exception occurs anywhere in the `try` block, Python immediately jumps to the `except` block and runs that code instead.
+
+---
+
+## Catching Specific Exceptions
+
+A bare `except` catches **everything** — which is usually too broad. Best practice is to specify the exact exception type you're expecting:
+
+```python
+try:
+    num1 = 10
+    num2 = 0
+    result = num1 / num2
+    print(result)
+except ZeroDivisionError:
+    print("Cannot divide by zero.")
+```
+
+This is safer because it only catches division-by-zero errors. Any other unexpected error still raises normally, which helps you find bugs instead of silently swallowing them.
+
+---
+
+## Handling Multiple Exception Types
+
+Real programs can fail in multiple ways. You can chain `except` blocks to handle each failure differently:
+
+```python
+try:
+    num1 = int(input("Enter a number: "))
+    num2 = int(input("Enter another number: "))
+    result = num1 / num2
+    print("Result:", result)
+except ValueError:
+    print("Please enter valid numbers and try again.")
+except ZeroDivisionError:
+    print("Cannot divide by zero.")
+```
+
+If the user types `"abc"`, the `int()` conversion raises a `ValueError` and the first `except` block runs. If they type `0` for the second number, `ZeroDivisionError` fires and the second block runs. Each failure gets a tailored response.
+
+You can also catch multiple exception types in a single block:
+
+```python
+try:
+    result = int("abc") / 0
+except (ValueError, ZeroDivisionError) as e:
+    print(f"Error: {e}")
+```
+
+---
+
+## The `finally` Block — Code That Always Runs
+
+The `finally` block executes **regardless** of whether an exception occurred. It runs after the `try` block (if successful) or after the `except` block (if an error was caught):
+
+```python
+try:
+    num1 = int(input("Enter a number: "))
+    num2 = int(input("Enter another number: "))
+    result = num1 / num2
+    print("Result:", result)
+except ValueError:
+    print("Please enter valid numbers.")
+except ZeroDivisionError:
+    print("Cannot divide by zero.")
+finally:
+    print("Program completed.")
+```
+
+No matter what happens — valid input, invalid input, division by zero — `"Program completed."` always prints.
+
+### Practical Use Case: Closing Resources
+
+The most important use of `finally` is **resource cleanup**. Open files, database connections, and network sockets must be closed regardless of whether your operation succeeds:
+
+```python
+file = None
+try:
+    file = open("stored_files/program_data.txt", "r")
+    file.write("Hello")  # This will fail — file is opened in read mode
+except Exception as e:
+    print(f"Error: {e}")
+finally:
+    if file:
+        file.close()
+        print("File closed safely.")
+```
+
+Even though the write operation fails (you can't write to a file opened in read mode), the `finally` block ensures the file is closed. Without it, the file handle would leak.
+
+<Callout type="info">
+**The `with` statement is even better.** As covered in the file handling guide, `with open(...) as f:` automatically closes the file when the block ends — combining the safety of `finally` with cleaner syntax. Use `finally` for resources that don't support context managers.
+</Callout>
+
+---
+
+## The `else` Block — When Everything Succeeds
+
+There's a lesser-known fourth block: `else`. It runs **only if no exception was raised** in the `try` block:
+
+```python
+try:
+    num = int(input("Enter a number: "))
+except ValueError:
+    print("That's not a valid number.")
+else:
+    print(f"You entered: {num}")
+    print(f"Doubled: {num * 2}")
+finally:
+    print("Done.")
+```
+
+The full pattern is: `try` → `except` → `else` → `finally`. The `else` block keeps the "happy path" code separate from the error-prone code, making it clear exactly which lines you're protecting.
+
+---
+
+## Raising Custom Exceptions
+
+Sometimes you need to signal an error condition that Python wouldn't catch on its own. The `raise` keyword lets you throw exceptions explicitly:
+
+```python
+def divide(x, y):
+    if y == 0:
+        raise ValueError("Cannot divide by zero")
+    return x / y
+
+try:
+    result = divide(10, 0)
+except ValueError as e:
+    print(f"Error: {e}")
+# Output: Error: Cannot divide by zero
+```
+
+### The `as` Keyword — Accessing Error Details
+
+Notice the `as e` syntax. This assigns the exception object to a variable so you can inspect it:
+
+```python
+try:
+    int("not_a_number")
+except ValueError as e:
+    print(f"Caught: {e}")
+    print(f"Type: {type(e).__name__}")
+# Output:
+# Caught: invalid literal for int() with base 10: 'not_a_number'
+# Type: ValueError
+```
+
+### Creating Your Own Exception Classes
+
+For larger projects, you can define custom exception types by inheriting from Python's `Exception` class:
+
+```python
+class InsufficientFundsError(Exception):
+    def __init__(self, balance, amount):
+        self.balance = balance
+        self.amount = amount
+        super().__init__(
+            f"Cannot withdraw ₹{amount}. Current balance: ₹{balance}"
+        )
+
+def withdraw(balance, amount):
+    if amount > balance:
+        raise InsufficientFundsError(balance, amount)
+    return balance - amount
+
+try:
+    new_balance = withdraw(500, 1000)
+except InsufficientFundsError as e:
+    print(f"Transaction failed: {e}")
+# Output: Transaction failed: Cannot withdraw ₹1000. Current balance: ₹500
+```
+
+---
+
+## Logic Errors
+
+Logic errors are the sneakiest kind — your program runs without crashing but produces **wrong results**:
+
+```python
+def add_five(num):
+    return num * 5   # Bug: should be num + 5, not num * 5
+
+result = add_five(10)
+print("Result:", result)
+# Output: Result: 50 (Expected: 15)
+```
+
+No exception is raised. No error message appears. The program confidently outputs the wrong answer. These errors can only be caught through:
+
+- **Testing** — running multiple inputs and checking expected outputs
+- **Code review** — having another person read your logic
+- **Debugging** — stepping through code line-by-line with a debugger
+
+<Callout type="warning">
+**Logic errors can't be caught with `try`/`except`.** The program doesn't know the output is wrong — it ran exactly as you wrote it. The only defense is writing tests that verify your functions return expected results for known inputs.
+</Callout>
+
+---
+
+## Error Handling Best Practices
+
+**1. Be specific with exceptions.** Catch the narrowest exception type possible. A bare `except:` swallows everything, including bugs you'd want to know about.
+
+```python
+# Bad — hides all errors
+except:
+    pass
+
+# Good — catches only what you expect
+except ValueError:
+    print("Invalid input.")
+```
+
+**2. Don't silence errors without reason.** If you catch an exception, at minimum log it. Silent failures create mysterious bugs.
+
+**3. Use `finally` for cleanup.** Open resources must be closed regardless of success or failure.
+
+**4. Raise exceptions early.** Validate inputs at the top of functions and raise immediately if something is wrong — don't let bad data propagate deep into your logic.
+
+**5. Provide useful error messages.** When raising or printing exceptions, include context: what was the expected value, what was the actual value, what should the user do next.
+
+---
+
+## Complete Example: Robust Division Calculator
+
+Here's a production-quality example that combines everything:
+
+```python
+def safe_divide():
+    """A division calculator with comprehensive error handling."""
+    try:
+        num1 = int(input("Enter the dividend: "))
+        num2 = int(input("Enter the divisor: "))
+
+        if num2 == 0:
+            raise ZeroDivisionError("Divisor cannot be zero.")
+
+        result = num1 / num2
+
+    except ValueError:
+        print("Invalid input. Please enter whole numbers only.")
+    except ZeroDivisionError as e:
+        print(f"Math error: {e}")
+    else:
+        print(f"Result: {num1} ÷ {num2} = {result:.2f}")
+    finally:
+        print("Calculation attempt complete.\n")
+
+# Run it three times with different inputs
+safe_divide()
+```
+
+---
+
+## What's Next?
+
+With error handling in your toolkit, your programs can fail gracefully instead of crashing. In the next series, we'll explore **Object-Oriented Programming in Python** — classes, objects, encapsulation, inheritance, polymorphism, and abstraction — the paradigm that powers every large-scale Python project.
+
+*Happy coding. 🐍*

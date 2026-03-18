@@ -1,0 +1,252 @@
+---
+title: "Python Lists — Part 1: Introduction, Indexing, and Mutability"
+description: "Learn what Python lists are, how to create them, understand their core characteristics, master positive and negative indexing, work with nested lists, and leverage mutability."
+date: "2026-01-25"
+youtubeId: "hfhsKRG6Sb8"
+tags: ["python", "lists", "data-structures", "indexing", "beginner"]
+author: "All About CS"
+published: true
+---
+
+<SeriesNavigation seriesName="Python Lists" currentPart="1" totalParts="3" slugs="python-lists-introduction, python-lists-methods, python-lists-builtin-functions" />
+
+<TableOfContents />
+
+# Python Lists — Part 1: Introduction, Indexing, and Mutability
+
+If there is one data structure every Python programmer uses daily, it is the **list**. Lists are the Swiss-army knife of Python — flexible enough to hold anything, powerful enough to model almost any sequential data, and backed by a rich set of built-in methods that keep your code concise. In this first part of a three-part series, we lay the foundation: what lists are, how to create them, and how indexing and mutability work.
+
+<YouTubeEmbed id="hfhsKRG6Sb8" title="Python Lists — Introduction, Indexing, and Mutability" />
+
+---
+
+## What Is a List?
+
+A **list** is a sequential data structure that stores an ordered collection of items inside **square brackets** (`[]`), separated by **commas**.
+
+```python
+fruits = ["apple", "banana", "cherry"]
+scores = [95, 82, 74, 91]
+mixed  = [1, "hello", 3.14, True]
+```
+
+Why does this matter? Imagine tracking the grades of 200 students. Creating `grade_1`, `grade_2`, … `grade_200` as individual variables is impractical and error-prone. A single list solves the problem:
+
+```python
+grades = [88, 76, 95, 64, 90]  # one variable, many values
+```
+
+You can also create an empty list and populate it later:
+
+```python
+inventory = []          # empty list using literal syntax
+backlog   = list()      # empty list using the list() constructor
+```
+
+<Callout type="info">
+Square-bracket syntax (`[]`) is preferred over `list()` for creating empty or literal lists — it is more readable and marginally faster because Python does not need to look up the `list` name at runtime.
+</Callout>
+
+---
+
+## Core Characteristics of Lists
+
+Python lists have three defining properties that set them apart from other data structures.
+
+### 1. Ordered
+
+Items maintain the exact sequence in which they were added. The first element you insert stays at position 0 unless you explicitly move it.
+
+```python
+letters = ["c", "a", "b"]
+print(letters)  # ['c', 'a', 'b'] — insertion order preserved
+```
+
+### 2. Arbitrary Types
+
+A single list can hold **integers, strings, floats, booleans, and even other lists** in the same collection. Python places no restriction on mixing types.
+
+```python
+everything = [42, "Python", 3.14, False, [1, 2, 3]]
+```
+
+### 3. Dynamic Size
+
+There is no fixed capacity. Lists grow when you add elements and shrink when you remove them — all at runtime.
+
+```python
+data = [10, 20]
+data.append(30)       # grows to [10, 20, 30]
+data.pop()            # shrinks back to [10, 20]
+```
+
+<Callout type="info">
+Under the hood, CPython over-allocates memory so that repeated `append()` calls run in **amortized O(1)** time. You rarely need to worry about performance for typical list operations.
+</Callout>
+
+---
+
+## Indexing — Positive and Negative
+
+Every element in a list has a **positional index** starting at `0`. Python also supports **negative indexing**, where `-1` refers to the last element, `-2` to the second-to-last, and so on.
+
+```python
+colors = ["red", "green", "blue", "yellow"]
+
+# Positive indexing
+print(colors[0])   # "red"
+print(colors[2])   # "blue"
+
+# Negative indexing
+print(colors[-1])  # "yellow"
+print(colors[-2])  # "blue"
+print(colors[-4])  # "red"
+```
+
+Here is how the two indexing schemes map onto the same list:
+
+```
+ Index:    0        1        2        3
+         ┌────────┬────────┬────────┬────────┐
+         │  red   │ green  │  blue  │ yellow │
+         └────────┴────────┴────────┴────────┘
+ Neg:    -4       -3       -2       -1
+```
+
+### Out-of-Range Access
+
+Accessing an index that does not exist raises an **IndexError**:
+
+```python
+colors = ["red", "green", "blue"]
+print(colors[5])  # IndexError: list index out of range
+```
+
+<Callout type="info">
+Always validate your index or use `try/except` when the index comes from user input or external data.
+</Callout>
+
+---
+
+## Nested Lists
+
+Lists can contain other lists, creating multi-dimensional structures. This is how you can represent grids, matrices, or grouped data. Access inner elements with **chained indexing**.
+
+```python
+matrix = [
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 8, 9],
+]
+
+print(matrix[0])       # [1, 2, 3]   — the entire first row
+print(matrix[1][2])    # 6           — second row, third column
+print(matrix[2][-1])   # 9           — last element of the last row
+```
+
+You can nest to any depth:
+
+```python
+deep = [[["a", "b"], ["c", "d"]], [["e", "f"]]]
+print(deep[0][1][0])   # "c"
+```
+
+### Practical Example — Student Records
+
+```python
+students = [
+    ["Alice", [90, 85, 92]],
+    ["Bob",   [78, 88, 95]],
+    ["Carol", [84, 91, 87]],
+]
+
+for name, grades in students:
+    avg = sum(grades) / len(grades)
+    print(f"{name}: {avg:.1f}")
+# Alice: 89.0
+# Bob: 87.0
+# Carol: 87.3
+```
+
+---
+
+## Mutability — Changing Lists In Place
+
+Unlike **strings** and **tuples**, lists are **mutable**. You can reassign individual elements, replace slices, or completely restructure the contents without creating a new object.
+
+### Reassigning a Single Element
+
+```python
+pets = ["cat", "dog", "fish"]
+pets[1] = "hamster"
+print(pets)  # ["cat", "hamster", "fish"]
+```
+
+### Reassigning a Slice
+
+You can replace a range of elements at once using **slice assignment**:
+
+```python
+nums = [0, 1, 2, 3, 4, 5]
+nums[1:4] = [10, 20, 30]
+print(nums)  # [0, 10, 20, 30, 4, 5]
+```
+
+The replacement does not even need to be the same length:
+
+```python
+nums = [0, 1, 2, 3, 4, 5]
+nums[1:4] = [99]
+print(nums)  # [0, 99, 4, 5]
+```
+
+### Deleting Elements with `del`
+
+The `del` statement removes elements by index or slice:
+
+```python
+letters = ["a", "b", "c", "d", "e"]
+del letters[2]       # removes "c"
+print(letters)       # ["a", "b", "d", "e"]
+
+del letters[1:3]     # removes "b" and "d"
+print(letters)       # ["a", "e"]
+```
+
+<Callout type="info">
+Mutability is powerful but comes with a caveat: if two variables reference the same list, changes through one variable are visible through the other. Use `.copy()` or `list()` to create an independent copy when needed.
+</Callout>
+
+### Aliasing vs. Copying
+
+```python
+original = [1, 2, 3]
+alias    = original        # both point to the SAME list
+copy     = original.copy() # independent shallow copy
+
+alias.append(4)
+print(original)  # [1, 2, 3, 4] — alias modified the original!
+print(copy)      # [1, 2, 3]    — copy is unaffected
+```
+
+---
+
+## Quick Reference Table
+
+| Feature | Description |
+|---|---|
+| **Syntax** | `[element1, element2, ...]` |
+| **Empty list** | `[]` or `list()` |
+| **First element** | `my_list[0]` |
+| **Last element** | `my_list[-1]` |
+| **Nested access** | `my_list[row][col]` |
+| **Reassign** | `my_list[i] = new_value` |
+| **Delete** | `del my_list[i]` |
+
+---
+
+## What's Next?
+
+Now that you understand how lists work — creation, indexing, nesting, and mutability — it is time to explore the **methods** that make lists truly powerful. In **Part 2**, we cover every essential list method: `sort()`, `append()`, `extend()`, `insert()`, `remove()`, `pop()`, `reverse()`, `count()`, `copy()`, and `clear()`.
+
+<SeriesNavigation seriesName="Python Lists" currentPart="1" totalParts="3" slugs="python-lists-introduction, python-lists-methods, python-lists-builtin-functions" />

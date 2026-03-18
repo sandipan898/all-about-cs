@@ -25,13 +25,14 @@ interface TutorialFile {
   filePath: string;
 }
 
+let _cachedFiles: TutorialFile[] | null = null;
+
 /**
  * Recursively discovers all .mdx files under content/tutorials.
- * Category is derived from the immediate subfolder name
- * (e.g. content/tutorials/python/foo.mdx → category "python").
- * Files placed directly in content/tutorials/ get category "general".
+ * Results are cached for the lifetime of the process (cleared on rebuild).
  */
 function discoverTutorialFiles(): TutorialFile[] {
+  if (_cachedFiles) return _cachedFiles;
   if (!fs.existsSync(CONTENT_DIR)) return [];
 
   const files: TutorialFile[] = [];
@@ -51,6 +52,7 @@ function discoverTutorialFiles(): TutorialFile[] {
   }
 
   scan(CONTENT_DIR, "general");
+  _cachedFiles = files;
   return files;
 }
 

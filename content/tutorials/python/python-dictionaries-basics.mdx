@@ -1,0 +1,251 @@
+---
+title: "Python Dictionaries: Basics and Key Concepts (Part 1 of 3)"
+description: "Learn the fundamentals of Python dictionaries — what they are, how to create them, key restrictions, accessing values, and understanding case sensitivity and integer keys."
+date: "2026-02-09"
+youtubeId: "dJ_MW89pH_k"
+tags: ["python", "dictionaries", "data-structures", "beginner"]
+author: "All About CS"
+published: true
+---
+
+<SeriesNavigation seriesName="Python Dictionaries" currentPart="1" totalParts="3" slugs="python-dictionaries-basics, python-dictionaries-operations, python-dictionaries-methods" />
+
+<TableOfContents />
+
+# Python Dictionaries: Basics and Key Concepts
+
+If lists are Python's workhorse, **dictionaries** are its Swiss Army knife. They let you store data as meaningful **key-value pairs** instead of relying on numeric positions — making your code more readable and your lookups lightning fast. This is Part 1 of our three-part series on Python dictionaries, where we cover the foundational concepts you need before moving on to operations and methods.
+
+<YouTubeEmbed id="dJ_MW89pH_k" title="Python Dictionaries: Basics and Key Concepts" />
+
+## Key Takeaways
+
+- Dictionaries store data as **key:value pairs** inside curly braces `{}`.
+- Keys must be **hashable** (strings, numbers, tuples) — lists and dicts cannot be keys.
+- As of Python 3.7+, dictionaries **maintain insertion order**.
+- Keys are **case-sensitive** — `"Name"` and `"name"` are different keys.
+- You can use integers as keys, but that is key lookup, not index-based access.
+
+## What Is a Dictionary?
+
+A **dictionary** is a mutable, ordered (Python 3.7+) collection of key-value pairs. Each key maps to exactly one value, and duplicate keys are not allowed — assigning to an existing key overwrites its value.
+
+Think of a real-world dictionary: you look up a **word** (the key) and get its **definition** (the value). Python dictionaries work the same way, except your keys and values can be almost any data type.
+
+```python
+student = {
+    "name": "Priya",
+    "age": 22,
+    "major": "Computer Science"
+}
+
+print(student)
+# {'name': 'Priya', 'age': 22, 'major': 'Computer Science'}
+```
+
+Every dictionary entry follows the pattern `key: value`, with entries separated by commas. The entire structure is wrapped in curly braces `{}`.
+
+<Callout type="info">
+Since Python 3.7, dictionaries are guaranteed to maintain **insertion order**. In earlier versions, the order of items was not guaranteed — but that is ancient history for most modern Python projects.
+</Callout>
+
+### Dictionaries vs. Lists
+
+| Feature | List | Dictionary |
+|---|---|---|
+| Access by | Integer index (`0`, `1`, `2`…) | Arbitrary key (`"name"`, `42`, `(1,2)`) |
+| Syntax | `[value1, value2]` | `{key1: val1, key2: val2}` |
+| Duplicate keys/values | Values can repeat | Keys must be unique; values can repeat |
+| Lookup speed | O(n) for search | O(1) average for key lookup |
+| Order | Always ordered by position | Ordered by insertion (3.7+) |
+
+The O(1) average lookup time is the killer feature. Whether your dictionary has 10 entries or 10 million, accessing a value by key takes roughly the same amount of time. Under the hood, Python uses a **hash table** to make this possible.
+
+## Creating Dictionaries
+
+There are several ways to create a dictionary. The two most common are **literal syntax** and the **`dict()` constructor**.
+
+### Literal Syntax
+
+The most straightforward approach — write out your key-value pairs directly:
+
+```python
+config = {
+    "host": "localhost",
+    "port": 5432,
+    "debug": True
+}
+```
+
+You can also create an **empty dictionary** and populate it later:
+
+```python
+cache = {}
+cache["user_123"] = {"name": "Arun", "role": "admin"}
+cache["user_456"] = {"name": "Sneha", "role": "editor"}
+```
+
+### The `dict()` Constructor
+
+The built-in `dict()` function offers several creation patterns:
+
+```python
+# From keyword arguments (keys must be valid identifiers)
+config = dict(host="localhost", port=5432, debug=True)
+
+# From a list of tuples
+pairs = [("host", "localhost"), ("port", 5432)]
+config = dict(pairs)
+
+# From a list of two-element lists
+config = dict([["host", "localhost"], ["port", 5432]])
+
+# From zip() — combining two sequences
+keys = ["name", "age", "city"]
+values = ["Rahul", 28, "Delhi"]
+person = dict(zip(keys, values))
+print(person)  # {'name': 'Rahul', 'age': 28, 'city': 'Delhi'}
+```
+
+<Callout type="info">
+When using keyword arguments with `dict()`, the keys are automatically treated as strings. You cannot use integer or tuple keys this way — use literal syntax instead.
+</Callout>
+
+### When Duplicate Keys Appear
+
+If you define the same key more than once, the **last value wins**:
+
+```python
+data = {"a": 1, "b": 2, "a": 99}
+print(data)  # {'a': 99, 'b': 2}
+```
+
+Python does not raise an error — it silently overwrites the earlier value. This is a common source of bugs when constructing large dictionaries by hand.
+
+## Key Restrictions: What Can Be a Key?
+
+Not every Python object can serve as a dictionary key. The rule is simple: keys must be **hashable**.
+
+### What Does Hashable Mean?
+
+A **hashable** object has a hash value that never changes during its lifetime (it needs a `__hash__()` method) and can be compared to other objects (it needs an `__eq__()` method). In practical terms, **immutable types are hashable** and **mutable types are not**.
+
+```python
+# Valid keys — all immutable/hashable
+valid = {
+    "name": "Alice",       # string ✓
+    42: "answer",           # integer ✓
+    (1, 2): "coordinates",  # tuple (with hashable elements) ✓
+    3.14: "pi",             # float ✓
+    True: "yes",            # bool ✓
+    None: "nothing"         # NoneType ✓
+}
+```
+
+```python
+# Invalid keys — mutable types raise TypeError
+{[1, 2]: "nope"}       # TypeError: unhashable type: 'list'
+{{"a": 1}: "nope"}     # TypeError: unhashable type: 'dict'
+{{1, 2}: "nope"}        # TypeError: unhashable type: 'set'
+```
+
+<Callout type="info">
+A tuple is only hashable if **all its elements** are also hashable. `(1, 2, 3)` works as a key, but `(1, [2, 3])` does not, because it contains a list.
+</Callout>
+
+### Why This Restriction Exists
+
+Python dictionaries are implemented as hash tables. When you store a key-value pair, Python computes the hash of the key to determine where in memory to place the entry. If the key's hash could change (because the object mutated), Python would lose track of where the value is stored.
+
+## Accessing Values
+
+Dictionaries use **keys**, not integer indices, for access. The most direct approach is square-bracket notation:
+
+```python
+student = {"Name": "Aarav", "Age": 21, "Grade": "A"}
+
+print(student["Name"])   # 'Aarav'
+print(student["Grade"])  # 'A'
+```
+
+If you try to access a key that does not exist, Python raises a **`KeyError`**:
+
+```python
+print(student["email"])  # KeyError: 'email'
+```
+
+We will cover the safer `.get()` method in Part 3 of this series, which returns a default value instead of raising an exception.
+
+### Case Sensitivity of Keys
+
+Dictionary keys are **case-sensitive**. `"Name"` and `"name"` are treated as two entirely different keys:
+
+```python
+data = {"Name": "Priya", "name": "Aarav"}
+print(len(data))       # 2 — both keys coexist
+print(data["Name"])    # 'Priya'
+print(data["name"])    # 'Aarav'
+```
+
+This is a frequent source of bugs, especially when working with user input or data from external APIs. Always be consistent with your key casing, or normalize keys before insertion:
+
+```python
+raw_key = "User_Name"
+normalized = raw_key.lower()  # 'user_name'
+```
+
+### Integer Keys for Index-Like Access
+
+You can use integers as keys to create something that looks like index-based access — but it is fundamentally different:
+
+```python
+ranking = {1: "Gold", 2: "Silver", 3: "Bronze"}
+print(ranking[1])  # 'Gold' — this is KEY lookup, not INDEX lookup
+```
+
+With a list, `my_list[1]` gives you the second element (index 1). With a dictionary, `my_dict[1]` gives you the value mapped to the **key** `1`. The distinction matters because dictionaries have no concept of "first element" or "second element" — only mappings from keys to values.
+
+```python
+# Integer keys don't have to be sequential
+sparse = {0: "zero", 100: "hundred", -5: "negative five"}
+print(sparse[100])   # 'hundred'
+print(sparse[-5])    # 'negative five'
+```
+
+### Bool Keys and Numeric Overlap
+
+Here is a subtlety that surprises many developers: Python considers `True == 1` and `False == 0`, so they **share hash values**:
+
+```python
+tricky = {True: "bool", 1: "int"}
+print(tricky)       # {True: 'int'} — 1 overwrites True's value
+print(len(tricky))  # 1
+```
+
+Because `True` and `1` are considered equal and have the same hash, they map to the same slot. The same applies to `False` and `0`. Keep this in mind when mixing boolean and integer keys.
+
+## Checking if a Dictionary Is Empty
+
+You can check whether a dictionary has entries using `len()` or by evaluating it in a boolean context:
+
+```python
+empty_dict = {}
+data = {"key": "value"}
+
+# Using len()
+print(len(empty_dict))  # 0
+print(len(data))        # 1
+
+# Boolean evaluation — empty dict is falsy
+if not empty_dict:
+    print("Dictionary is empty")
+
+if data:
+    print("Dictionary has entries")
+```
+
+## What's Next?
+
+Now that you understand what dictionaries are, how to create them, and how keys work, you are ready to put them to work. In **Part 2**, we cover the operations that make dictionaries truly powerful: adding and updating entries, iterating in different ways, nesting dictionaries, dictionary comprehensions, and membership testing with `in`.
+
+<SeriesNavigation seriesName="Python Dictionaries" currentPart="1" totalParts="3" slugs="python-dictionaries-basics, python-dictionaries-operations, python-dictionaries-methods" />

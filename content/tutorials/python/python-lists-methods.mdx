@@ -1,0 +1,305 @@
+---
+title: "Python Lists — Part 2: Essential List Methods"
+description: "Master every essential Python list method — sort(), append(), extend(), index(), insert(), remove(), pop(), reverse(), count(), copy(), and clear() — with practical examples."
+date: "2026-01-26"
+youtubeId: "hfhsKRG6Sb8"
+tags: ["python", "lists", "methods", "data-structures", "beginner"]
+author: "All About CS"
+published: true
+---
+
+<SeriesNavigation seriesName="Python Lists" currentPart="2" totalParts="3" slugs="python-lists-introduction, python-lists-methods, python-lists-builtin-functions" />
+
+<TableOfContents />
+
+# Python Lists — Part 2: Essential List Methods
+
+In Part 1, we learned what lists are, how indexing works, and why mutability matters. Now it is time to put that mutability to work. Python lists come loaded with **built-in methods** — functions attached directly to list objects — that let you add, remove, search, reorder, and duplicate elements with a single call. Every method in this article **modifies the list in place** (except `copy()`, `count()`, and `index()`, which return values).
+
+<YouTubeEmbed id="hfhsKRG6Sb8" title="Python Lists — Essential List Methods" />
+
+---
+
+## Adding Elements
+
+### `append(item)` — Add One Item to the End
+
+`append()` takes a **single argument** and adds it as the last element of the list.
+
+```python
+languages = ["Python", "JavaScript"]
+languages.append("Go")
+print(languages)  # ["Python", "JavaScript", "Go"]
+```
+
+Because `append()` takes exactly one argument, passing a list appends the **entire list as a single nested element**:
+
+```python
+languages.append(["Rust", "C++"])
+print(languages)  # ["Python", "JavaScript", "Go", ["Rust", "C++"]]
+```
+
+<Callout type="info">
+`append()` returns `None`. A common mistake is writing `my_list = my_list.append(x)`, which sets `my_list` to `None`. Just call `my_list.append(x)` on its own.
+</Callout>
+
+### `extend(iterable)` — Add Multiple Items
+
+`extend()` unpacks an iterable and adds **each element individually** to the end of the list.
+
+```python
+languages = ["Python", "JavaScript"]
+languages.extend(["Rust", "C++"])
+print(languages)  # ["Python", "JavaScript", "Rust", "C++"]
+```
+
+It works with any iterable, not just lists:
+
+```python
+letters = ["a", "b"]
+letters.extend("cd")
+print(letters)  # ["a", "b", "c", "d"]
+
+letters.extend(range(3))
+print(letters)  # ["a", "b", "c", "d", 0, 1, 2]
+```
+
+### `insert(index, item)` — Add at a Specific Position
+
+`insert()` places an element at the given index, shifting all subsequent elements one position to the right.
+
+```python
+nums = [10, 30, 40]
+nums.insert(1, 20)
+print(nums)  # [10, 20, 30, 40]
+```
+
+Inserting at index `0` adds to the front; inserting at an index beyond the list length appends to the end:
+
+```python
+nums.insert(0, 5)
+print(nums)  # [5, 10, 20, 30, 40]
+
+nums.insert(100, 50)
+print(nums)  # [5, 10, 20, 30, 40, 50]
+```
+
+<Callout type="info">
+`insert()` at position 0 runs in **O(n)** time because every element must shift. If you frequently insert at the front, consider `collections.deque`, which supports O(1) left appends.
+</Callout>
+
+---
+
+## Removing Elements
+
+### `remove(value)` — Delete by Value
+
+`remove()` finds and deletes the **first occurrence** of the specified value. It raises a `ValueError` if the value is not found.
+
+```python
+colors = ["red", "green", "blue", "green"]
+colors.remove("green")
+print(colors)  # ["red", "blue", "green"]
+```
+
+```python
+colors.remove("purple")  # ValueError: list.remove(x): x not in list
+```
+
+### `pop(index=-1)` — Delete by Index and Return
+
+`pop()` removes the element at the given index and **returns it**. Without an argument, it removes the last element — making it ideal for **stack** (LIFO) operations.
+
+```python
+stack = [1, 2, 3, 4, 5]
+
+last   = stack.pop()     # returns 5
+print(stack)             # [1, 2, 3, 4]
+
+second = stack.pop(1)    # returns 2
+print(stack)             # [1, 3, 4]
+```
+
+### `clear()` — Remove Everything
+
+`clear()` empties the list completely, leaving you with `[]`.
+
+```python
+tasks = ["email", "code review", "deploy"]
+tasks.clear()
+print(tasks)  # []
+```
+
+This is equivalent to `del tasks[:]` but more readable.
+
+### Choosing the Right Removal Method
+
+| Scenario | Method |
+|---|---|
+| Know the **value** to remove | `remove(value)` |
+| Know the **index** and need the element back | `pop(index)` |
+| Remove from the **end** (stack pop) | `pop()` |
+| Remove **all** elements | `clear()` |
+| Remove by **index** without needing the value | `del my_list[i]` |
+
+---
+
+## Searching and Counting
+
+### `index(value, start=0, stop=len)` — Find Position
+
+`index()` returns the position of the **first occurrence** of a value. You can optionally restrict the search to a slice with `start` and `stop`.
+
+```python
+letters = ["a", "b", "c", "b", "d"]
+
+print(letters.index("b"))       # 1
+print(letters.index("b", 2))    # 3 — search starts at index 2
+```
+
+If the value is not present, a `ValueError` is raised. A safe pattern is to check membership first:
+
+```python
+if "z" in letters:
+    pos = letters.index("z")
+else:
+    pos = -1
+```
+
+### `count(value)` — Count Occurrences
+
+`count()` returns the number of times a value appears in the list.
+
+```python
+votes = ["yes", "no", "yes", "yes", "no"]
+print(votes.count("yes"))  # 3
+print(votes.count("maybe"))  # 0
+```
+
+---
+
+## Reordering
+
+### `sort(key=None, reverse=False)` — Sort In Place
+
+`sort()` orders elements **in place** and returns `None`. By default it sorts in ascending order. Pass `reverse=True` to sort descending.
+
+```python
+numbers = [5, 2, 9, 1, 7]
+numbers.sort()
+print(numbers)  # [1, 2, 5, 7, 9]
+
+numbers.sort(reverse=True)
+print(numbers)  # [9, 7, 5, 2, 1]
+```
+
+The `key` parameter accepts a function that extracts a comparison value from each element:
+
+```python
+words = ["banana", "apple", "cherry", "date"]
+words.sort(key=len)
+print(words)  # ["date", "apple", "banana", "cherry"]
+```
+
+```python
+students = [("Alice", 88), ("Bob", 95), ("Carol", 72)]
+students.sort(key=lambda s: s[1], reverse=True)
+print(students)  # [("Bob", 95), ("Alice", 88), ("Carol", 72)]
+```
+
+<Callout type="info">
+`sort()` uses **Timsort**, a hybrid sorting algorithm with O(n log n) worst-case performance. It is stable — elements with equal keys retain their original order.
+</Callout>
+
+### `reverse()` — Reverse In Place
+
+`reverse()` flips the list order without sorting.
+
+```python
+items = [1, 2, 3, 4, 5]
+items.reverse()
+print(items)  # [5, 4, 3, 2, 1]
+```
+
+---
+
+## Copying
+
+### `copy()` — Shallow Copy
+
+`copy()` returns a **shallow copy** — a new list with references to the same objects. Changes to the new list's structure do not affect the original (and vice versa), but changes to shared mutable objects inside the list **will** be visible in both.
+
+```python
+original = [1, 2, [3, 4]]
+clone    = original.copy()
+
+clone.append(5)
+print(original)  # [1, 2, [3, 4]]      — structure unchanged
+print(clone)     # [1, 2, [3, 4], 5]
+
+clone[2][0] = 99
+print(original)  # [1, 2, [99, 4]]     — nested list IS shared!
+```
+
+For a fully independent copy of nested structures, use `copy.deepcopy()`:
+
+```python
+import copy
+
+original = [1, 2, [3, 4]]
+deep     = copy.deepcopy(original)
+
+deep[2][0] = 99
+print(original)  # [1, 2, [3, 4]]  — original untouched
+```
+
+---
+
+## Complete Method Reference
+
+| Method | Description | Returns |
+|---|---|---|
+| `append(x)` | Add `x` to the end | `None` |
+| `extend(iter)` | Add each item from `iter` | `None` |
+| `insert(i, x)` | Insert `x` at index `i` | `None` |
+| `remove(x)` | Remove first occurrence of `x` | `None` |
+| `pop(i=-1)` | Remove and return item at `i` | The removed item |
+| `clear()` | Remove all items | `None` |
+| `index(x)` | First index of `x` | `int` |
+| `count(x)` | Number of occurrences of `x` | `int` |
+| `sort()` | Sort in place | `None` |
+| `reverse()` | Reverse in place | `None` |
+| `copy()` | Shallow copy | New `list` |
+
+---
+
+## Putting It All Together
+
+```python
+tasks = []
+
+tasks.append("write tests")
+tasks.append("fix bug")
+tasks.append("code review")
+tasks.insert(0, "standup")
+
+print(tasks)
+# ["standup", "write tests", "fix bug", "code review"]
+
+tasks.remove("fix bug")
+done = tasks.pop(0)
+print(f"Completed: {done}")   # "standup"
+
+tasks.sort()
+print(tasks)                  # ["code review", "write tests"]
+
+print(f"Remaining: {len(tasks)}")  # 2
+```
+
+---
+
+## What's Next?
+
+You now have a complete toolkit for modifying lists through their built-in methods. In **Part 3**, we move beyond methods to explore the **built-in functions** that work with lists — `len()`, `sum()`, `min()`, `max()`, `sorted()`, `list()`, `enumerate()`, and `zip()`. These functions unlock patterns that make your list code cleaner and more Pythonic.
+
+<SeriesNavigation seriesName="Python Lists" currentPart="2" totalParts="3" slugs="python-lists-introduction, python-lists-methods, python-lists-builtin-functions" />

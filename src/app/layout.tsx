@@ -5,6 +5,7 @@ import { Footer } from "@/components/footer";
 import { JsonLd } from "@/components/json-ld";
 import { SearchProvider } from "@/components/search-trigger";
 import { ThemeProvider } from "@/components/theme-provider";
+import { ScrollToTop } from "@/components/scroll-to-top";
 import { generateWebSiteJsonLd } from "@/lib/json-ld";
 import "./globals.css";
 
@@ -47,6 +48,7 @@ export default function RootLayout({
             <main className="flex-1">{children}</main>
             <Footer />
           </SearchProvider>
+          <ScrollToTop />
         </ThemeProvider>
       </body>
     </html>

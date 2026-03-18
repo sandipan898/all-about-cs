@@ -38,7 +38,7 @@ function DualModeInner({
   const { mode } = useDualMode();
 
   return (
-    <div className="mx-auto max-w-6xl overflow-hidden px-4 py-8 sm:px-6">
+    <div className="mx-auto max-w-6xl overflow-x-clip px-4 py-8 sm:px-6">
       <div className="mb-6 flex justify-end">
         <DualModeToggle />
       </div>
@@ -69,7 +69,7 @@ function DualModeInner({
           </div>
 
           <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
-            {/* Desktop: sticky sidebar video */}
+            {/* Desktop: sticky sidebar video (sticky handled inside YouTubeEmbed) */}
             <div className="hidden lg:block">
               <YouTubeEmbed id={youtubeId} title={videoTitle} />
             </div>

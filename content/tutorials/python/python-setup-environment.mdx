@@ -1,0 +1,242 @@
+---
+title: "The Complete Guide to Setting Up Your Python Development Environment"
+description: "Everything you need to go from zero to writing Python — install Python 3 on Linux or Windows, set up VS Code or Sublime Text as your editor, configure essential extensions, and run your first script."
+date: "2026-01-01"
+youtubeId: "2OCWHaCHDzg"
+tags: ["python", "setup", "vscode", "sublime-text", "beginners", "linux", "windows", "development-environment"]
+author: "All About CS"
+published: true
+---
+
+# The Complete Guide to Setting Up Your Python Development Environment
+
+Before you write your first line of Python, you need two things: the **Python interpreter** and a comfortable editor. Getting this right from the start saves hours of frustration later. This guide walks you through every step — installing Python on both Linux and Windows, then setting up **two editor options** (VS Code and Sublime Text) so you can pick whichever fits your style.
+
+<YouTubeEmbed id="2OCWHaCHDzg" title="The Complete Guide to Setting Up Your Python Development Environment" />
+
+<TableOfContents />
+
+## Installing Python
+
+### On Linux
+
+Most Linux distributions ship with Python pre-installed. Open a terminal and check:
+
+```bash
+python --version
+# or, if that points to Python 2:
+python3 --version
+```
+
+If the output shows **Python 2.x**, or Python 3 isn't installed, install it:
+
+```bash
+sudo apt-get update
+sudo apt-get install python3.8
+```
+
+Verify the installation:
+
+```bash
+python3 --version
+# Expected: Python 3.8.x
+```
+
+<Callout type="info">
+**Python 2 vs Python 3 on Linux:** Many Linux systems still default `python` to Python 2. Throughout this course, always use `python3` and `pip3` explicitly until you've configured Python 3 as your system default. This one habit prevents a surprising number of compatibility errors.
+</Callout>
+
+| Intent | Python 2 default system | Python 3 default system |
+|---|---|---|
+| Run a script | `python3 script.py` | `python script.py` |
+| Install a package | `pip3 install pkg` | `pip install pkg` |
+| Check version | `python3 --version` | `python --version` |
+
+### On Windows
+
+Windows does not bundle Python. Download the official installer:
+
+1. Go to [python.org/downloads](https://www.python.org/downloads/) and click **Download Python 3.x.x**.
+2. Run the `.exe` file.
+3. **Critical step:** Check the box **"Add Python to PATH"** before clicking Install Now.
+
+<Callout type="warning">
+**Don't skip "Add to PATH."** Without it, your terminal won't find the `python` command and you'll need to reinstall. This is the single most common stumbling block for new Windows users.
+</Callout>
+
+After installation, open **Command Prompt** (`Win + R` → `cmd`) and verify:
+
+```bash
+python --version
+# Expected: Python 3.x.x
+
+pip --version
+# Expected: pip xx.x from C:\Users\...\Python3x\...
+```
+
+---
+
+## Editor Option 1: Visual Studio Code (Recommended)
+
+**VS Code** is a free, open-source editor from Microsoft with mature Python tooling — making it the go-to choice for both beginners and professionals.
+
+### Installing VS Code
+
+**On Linux:**
+
+```bash
+# Option A — Snap Store (recommended)
+sudo snap install --classic code
+
+# Option B — .deb package
+sudo dpkg -i code_*.deb
+sudo apt-get install -f
+```
+
+**On Windows:** Download from [code.visualstudio.com](https://code.visualstudio.com/), run the installer, and accept the defaults.
+
+### Configuring VS Code for Python
+
+**Step 1: Install the Python Extension**
+
+Create a new file with a `.py` extension (e.g., `hello_world.py`). VS Code will prompt you to install the Python extension. If not:
+
+1. Open Extensions (`Ctrl+Shift+X`).
+2. Search `Python`.
+3. Install the one published by **Microsoft**.
+
+This unlocks:
+- **IntelliSense** — smart autocompletion
+- **Linting** — real-time error checking
+- **Integrated debugging** — breakpoints and variable inspection
+- **Environment switching** — seamlessly switch between Python versions
+
+**Step 2: Select Your Interpreter**
+
+Look at the **bottom-left corner** of VS Code. Click the Python version shown to open a picker where you can choose from any Python installation or virtual environment on your machine.
+
+<Callout type="info">
+**Why does interpreter selection matter?** If you later create virtual environments for different projects, this picker lets you switch between them instantly — without touching a terminal.
+</Callout>
+
+**Step 3: Write and Run "Hello, World!"**
+
+```python
+print("Hello, World!")
+```
+
+Click the **▶ Run** button at the top-right. The integrated terminal prints `Hello, World!`. Alternatively, run from the terminal:
+
+```bash
+python3 hello_world.py   # Linux
+python hello_world.py    # Windows
+```
+
+### The AREPL Extension (Optional)
+
+AREPL evaluates your Python code **as you type**, showing output in a live preview panel. Install it from Extensions (`Ctrl+Shift+X` → search `AREPL`).
+
+```python
+numbers = [1, 2, 3, 4, 5]
+squared = [n ** 2 for n in numbers]
+print(squared)
+# AREPL shows: [1, 4, 9, 16, 25] — instantly, no save/run needed
+```
+
+Activate it by clicking the **orange AREPL button** in the top-right corner of any `.py` file.
+
+---
+
+## Editor Option 2: Sublime Text
+
+**Sublime Text** is a lighter-weight editor — fast, distraction-free, and ideal for beginners who prefer simplicity.
+
+### Installing Sublime Text
+
+Download from [sublimetext.com](https://www.sublimetext.com) for your OS. Linux users can also install via Snap Store:
+
+```bash
+sudo snap install sublime-text --classic
+```
+
+### Configuring a Python Build System
+
+Sublime Text can run Python directly. Navigate to **Tools → Build System → New Build System** and paste:
+
+```json
+{
+    "cmd": ["python3", "-u", "$file"],
+    "file_regex": "^[ ]*File \"(...*?)\", line ([0-9]*)",
+    "selector": "source.python"
+}
+```
+
+Save as `Python3.sublime-build`. Now select **Tools → Build System → Python3** and press `Ctrl+B` to run any `.py` file.
+
+### Installing Package Control and Extensions
+
+Open the **Command Palette** (`Ctrl+Shift+P`), type `Install Package Control`, and install it. Then you can search for extensions:
+
+| Package | Purpose |
+|---------|---------|
+| **SublimeREPL** | Run interactive Python sessions — essential for `input()` |
+| **Anaconda** (Sublime package) | Linting, autocompletion, and code navigation |
+| **Kite** | AI-powered code completions (optional) |
+
+To install: Command Palette → `Package Control: Install Package` → search and select.
+
+### Running Files with SublimeREPL
+
+For scripts that use `input()`, the default build system won't work. Use SublimeREPL instead:
+
+**Tools → SublimeREPL → Python → Python - Run current file**
+
+This opens an interactive pane where you can type input and see output.
+
+---
+
+## The Terminal: Your Universal Fallback
+
+Regardless of editor, you can always run Python from the terminal:
+
+```bash
+cd ~/projects
+python3 hello.py
+```
+
+This works everywhere and is essential for running scripts with command-line arguments, Django servers, or automated builds.
+
+---
+
+## Quick Verification Script
+
+Run this in your editor of choice to confirm everything works:
+
+```python
+import sys
+
+print(f"Python version: {sys.version}")
+print(f"Installation path: {sys.executable}")
+print("Your environment is ready — happy coding!")
+```
+
+---
+
+## Your Environment at a Glance
+
+| Tool | Purpose |
+|---|---|
+| **Python 3.8+** | The interpreter that runs your code |
+| **VS Code** (recommended) | Feature-rich editor with debugging, IntelliSense, Git |
+| **Sublime Text** (alternative) | Lightweight, fast, minimal distraction |
+| **Python Extension** (VS Code) | IntelliSense, linting, debugging, env switching |
+| **AREPL** (VS Code, optional) | Real-time output as you type |
+| **SublimeREPL** (Sublime) | Interactive Python sessions |
+
+---
+
+## What's Next?
+
+Your environment is ready. In the next tutorial, we'll write our first meaningful Python programs — exploring **variables, data types, and basic operators**. The setup work you've done here means you can follow along hands-on from the very first line.
+
+*Happy coding. 🐍*
