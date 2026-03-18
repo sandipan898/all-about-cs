@@ -114,3 +114,20 @@ pre {
 .prose :where(code):not(:where(pre *))::after {
   content: none;
 }
+
+/* Mobile overflow protection */
+.prose pre {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.prose table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.prose img {
+  max-width: 100%;
+  height: auto;
+}

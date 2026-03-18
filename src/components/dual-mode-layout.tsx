@@ -27,7 +27,7 @@ export function DualModeLayout({
 }
 
 const proseClasses =
-  "prose prose-headings:font-bold prose-headings:tracking-tight prose-a:text-accent prose-a:no-underline hover:prose-a:underline prose-pre:rounded-xl prose-pre:border prose-pre:border-border prose-img:rounded-xl";
+  "prose max-w-none prose-headings:font-bold prose-headings:tracking-tight prose-a:text-accent prose-a:no-underline hover:prose-a:underline prose-pre:rounded-xl prose-pre:border prose-pre:border-border prose-img:rounded-xl prose-pre:overflow-x-auto";
 
 function DualModeInner({
   children,
@@ -37,26 +37,23 @@ function DualModeInner({
   const { mode } = useDualMode();
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+    <div className="mx-auto max-w-6xl overflow-hidden px-4 py-8 sm:px-6">
       <div className="mb-6 flex justify-end">
         <DualModeToggle />
       </div>
 
       {mode === "read" ? (
-        /* ── Read Mode: content center + optional sidebar ── */
         <div className="grid gap-10 xl:grid-cols-[1fr_240px]">
-          <div>
+          <div className="min-w-0">
             <article className={`${proseClasses} mx-auto max-w-3xl xl:mx-0`}>
               {children}
             </article>
 
-            {/* Article-bottom ad — after content, outside prose */}
             <div className="mx-auto mt-12 max-w-3xl xl:mx-0">
               <AdPlacement location="article-bottom" />
             </div>
           </div>
 
-          {/* Desktop sidebar — hidden below xl */}
           <aside className="hidden xl:block">
             <div className="sticky top-24">
               <AdPlacement location="sidebar" />
@@ -64,20 +61,25 @@ function DualModeInner({
           </aside>
         </div>
       ) : (
-        /* ── Watch Mode: two-column split ── */
         <div>
-          <div className="grid gap-8 lg:grid-cols-[1fr_1fr]">
-            <div>
-              <YouTubeEmbed id={youtubeId} title={videoTitle} />
-            </div>
-            <article className={`${proseClasses} max-w-none`}>
-              {children}
-            </article>
+          {/* Mobile: video stacked on top, not sticky */}
+          <div className="mb-6 lg:hidden">
+            <YouTubeEmbed id={youtubeId} title={videoTitle} />
           </div>
 
-          {/* Article-bottom ad — full width below split */}
-          <div className="mx-auto mt-12 max-w-3xl">
-            <AdPlacement location="article-bottom" />
+          <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+            {/* Desktop: sticky sidebar video */}
+            <div className="hidden lg:block">
+              <YouTubeEmbed id={youtubeId} title={videoTitle} />
+            </div>
+
+            <div className="min-w-0">
+              <article className={proseClasses}>{children}</article>
+
+              <div className="mt-12">
+                <AdPlacement location="article-bottom" />
+              </div>
+            </div>
           </div>
         </div>
       )}

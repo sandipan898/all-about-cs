@@ -1,17 +1,37 @@
 "use client";
 
-import { X, Maximize2 } from "lucide-react";
+import { X, Maximize2, MonitorPlay } from "lucide-react";
 import { useDualMode } from "./dual-mode-provider";
 
 interface YouTubeEmbedProps {
   id: string;
   title?: string;
+  inline?: boolean;
 }
 
-export function YouTubeEmbed({ id, title = "Video" }: YouTubeEmbedProps) {
+export function YouTubeEmbed({
+  id,
+  title = "Video",
+  inline = false,
+}: YouTubeEmbedProps) {
   const { mode, setMode } = useDualMode();
 
   const embedUrl = `https://www.youtube-nocookie.com/embed/${id}?rel=0`;
+
+  // ── Watch Mode + inline (from MDX): minimal "now playing" badge ──
+  if (mode === "watch" && inline) {
+    return (
+      <div className="not-prose my-6 flex items-center gap-3 rounded-lg border border-primary/20 bg-primary/5 px-4 py-3">
+        <MonitorPlay className="h-5 w-5 shrink-0 text-primary" />
+        <div className="min-w-0 flex-1">
+          <p className="text-sm font-medium text-foreground">{title}</p>
+          <p className="text-xs text-muted">
+            Playing in the side panel
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   // ── Read Mode: collapsed card that invites the user to switch ──
   if (mode === "read") {
@@ -22,7 +42,6 @@ export function YouTubeEmbed({ id, title = "Video" }: YouTubeEmbedProps) {
           onClick={() => setMode("watch")}
           className="group flex w-full items-center gap-4 px-5 py-4 text-left transition-colors hover:bg-surface-hover"
         >
-          {/* Thumbnail */}
           <div className="relative aspect-video w-28 flex-shrink-0 overflow-hidden rounded-lg bg-border sm:w-36">
             <img
               src={`https://img.youtube.com/vi/${id}/mqdefault.jpg`}
@@ -42,13 +61,12 @@ export function YouTubeEmbed({ id, title = "Video" }: YouTubeEmbedProps) {
             </div>
           </div>
 
-          {/* CTA */}
           <div className="min-w-0 flex-1">
-            <p className="text-sm font-semibold text-foreground">
-              {title}
-            </p>
+            <p className="text-sm font-semibold text-foreground">{title}</p>
             <p className="mt-0.5 text-xs text-muted">
-              Switch to <span className="text-primary font-medium">Watch Mode</span> to follow along
+              Switch to{" "}
+              <span className="font-medium text-primary">Watch Mode</span> to
+              follow along
             </p>
           </div>
 
@@ -58,11 +76,10 @@ export function YouTubeEmbed({ id, title = "Video" }: YouTubeEmbedProps) {
     );
   }
 
-  // ── Watch Mode: sticky video player ──
+  // ── Watch Mode (layout-level player): sticky on desktop, static on mobile ──
   return (
-    <div className="not-prose sticky top-20 z-30">
+    <div className="not-prose lg:sticky lg:top-20 z-30">
       <div className="overflow-hidden rounded-xl border border-border bg-surface shadow-lg shadow-black/30">
-        {/* Header bar */}
         <div className="flex items-center justify-between border-b border-border bg-surface px-3 py-2">
           <span className="text-xs font-medium text-muted truncate pr-2">
             {title}
@@ -77,7 +94,6 @@ export function YouTubeEmbed({ id, title = "Video" }: YouTubeEmbedProps) {
           </button>
         </div>
 
-        {/* Iframe */}
         <div className="relative aspect-video w-full">
           <iframe
             src={embedUrl}

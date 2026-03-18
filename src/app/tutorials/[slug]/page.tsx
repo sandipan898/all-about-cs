@@ -17,8 +17,12 @@ interface TutorialPageProps {
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
+function InlineYouTubeEmbed(props: { id: string; title?: string }) {
+  return <YouTubeEmbed {...props} inline />;
+}
+
 const mdxComponents = {
-  YouTubeEmbed,
+  YouTubeEmbed: InlineYouTubeEmbed,
 };
 
 // ── Static Params ──────────────────────────────────────────────────
