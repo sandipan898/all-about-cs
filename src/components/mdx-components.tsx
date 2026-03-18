@@ -2,6 +2,8 @@
 
 import type { MDXComponents } from "mdx/types";
 import { YouTubeEmbed } from "./youtube-embed";
+import { Callout } from "./callout";
+import { useDualMode } from "./dual-mode-provider";
 
 /**
  * Custom MDX component overrides.
@@ -13,6 +15,7 @@ import { YouTubeEmbed } from "./youtube-embed";
  */
 export function useMDXComponents(): MDXComponents {
   return {
+    Callout,
     YouTubeEmbed,
   };
 }

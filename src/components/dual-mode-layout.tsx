@@ -5,6 +5,7 @@ import { DualModeProvider, useDualMode } from "./dual-mode-provider";
 import { DualModeToggle } from "./dual-mode-toggle";
 import { YouTubeEmbed } from "./youtube-embed";
 import { AdPlacement } from "./ads/ad-placement";
+import { Callout } from "./callout";
 
 interface DualModeLayoutProps {
   children: ReactNode;
