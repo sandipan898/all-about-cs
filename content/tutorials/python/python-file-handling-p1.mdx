@@ -1,0 +1,228 @@
+---
+title: "File Handling in Python — Part 1: Creating, Writing, and Reading Files"
+description: "Learn how file handling works in Python — understand why files matter, how to use the open() function and file modes, and how to create, write, and read files with practical examples."
+date: "2026-03-10"
+youtubeId: "GA67Nz5jYwA"
+tags: ["python", "file-handling", "io", "beginners"]
+author: "All About CS"
+published: true
+---
+
+<SeriesNavigation seriesName="File Handling in Python" currentPart="1" totalParts="2" slugs="python-file-handling-p1, python-file-handling-p2" />
+
+<TableOfContents />
+
+# File Handling in Python — Part 1: Creating, Writing, and Reading Files
+
+Every variable, every computed result, every piece of user input — it all vanishes from memory the moment your Python script finishes running. **File handling** gives your programs a permanent memory: a way to store data on disk and retrieve it the next time you need it.
+
+This is Part 1 of a two-part series. Here we'll cover the fundamentals: why file handling matters, how the `open()` function works, and how to create, write, and read files. Part 2 covers appending, deleting, the `with` statement, and file pointers.
+
+<YouTubeEmbed id="GA67Nz5jYwA" title="File Handling in Python — Part 1: Creating, Writing, and Reading Files" />
+
+## Key Takeaways
+
+- When a Python program stops, all in-memory data is lost — files provide **permanent storage**.
+- Every file operation starts with the built-in `open()` function, which takes a **file path** and a **mode**.
+- The mode tells Python what you intend to do: create, overwrite, read, or a combination.
+- Always call `.close()` after your operation — or use the `with` statement (covered in Part 2).
+- Use `.read()` to get the full file content, and `.readline()` to read one line at a time.
+
+---
+
+## Why File Handling Matters
+
+Think about this scenario: you write a program, run it, enter some data, perform operations, and get a result. When the program stops, **everything is gone** — cleared from memory because variables are temporary by nature.
+
+But what if those results are important? What if you want to pick up where you left off next time?
+
+One option is a database, but that brings significant complexity: schema design, connection management, query languages. For many everyday needs — saving configuration, logging output, storing user progress — a **plain text file** is the simplest and most practical solution.
+
+<Callout type="info">
+**Files vs. databases:** Use files for configuration, logs, small datasets, and simple data exchange between programs. Reach for a database when you need structured querying, concurrent multi-user access, or datasets that grow beyond what fits in a single manageable file.
+</Callout>
+
+---
+
+## The `open()` Function
+
+Every file operation in Python begins with the built-in `open()` function. It takes two arguments: the **file path** and a **mode** string.
+
+```python
+my_file = open("path/to/file.txt", "mode")
+# ... perform read or write operations ...
+my_file.close()
+```
+
+After every operation, you **must close the file** with `.close()`. Leaving a file open can lock it, prevent other processes from accessing it, and in some cases cause data to not be flushed to disk properly.
+
+> 🖼️ **Visual Suggestion:** Diagram showing the open → operate → close lifecycle of a file.
+
+---
+
+## File Modes Explained
+
+The mode string is how you tell Python what you want to do with the file:
+
+| Mode | Name | Behaviour |
+|------|------|-----------|
+| `"r"` | Read | Open an existing file for reading. Raises an error if the file doesn't exist. |
+| `"w"` | Write | Open a file for writing. **Creates** the file if it doesn't exist. **Overwrites** existing content. |
+| `"a"` | Append | Open a file for appending. **Creates** the file if it doesn't exist. **Preserves** existing content. |
+| `"x"` | Create | Create a new file. Raises an error if the file already exists. |
+| `"r+"` | Read + Write | Open for both reading and writing. Raises an error if the file doesn't exist. |
+| `"w+"` | Write + Read | Open for writing and reading. **Creates** the file if it doesn't exist. Overwrites existing content. |
+| `"a+"` | Append + Read | Open for appending and reading. **Creates** the file if it doesn't exist. File pointer starts at the end. |
+
+<Callout type="info">
+**`r+` vs `w+`:** Both allow reading and writing, but `r+` requires the file to already exist (raises `FileNotFoundError` otherwise), while `w+` creates the file if missing — and erases all existing content in the process. If you need to create a new file and read from it in the same session, `w+` is your mode.
+</Callout>
+
+**Quick quiz:** To create a new file, which modes can you use? Pause and think about it.
+
+The correct answers are `"w"`, `"w+"`, `"a"`, `"a+"`, and `"x"` — all of these create the file if it doesn't exist. The only mode that *cannot* create a file is `"r+"`, which raises an error if the file is missing.
+
+---
+
+## Creating and Writing a File
+
+The most common way to create a new file and write data into it is with `"w"` mode:
+
+```python
+my_file = open("stored_files/program_data.txt", "w")
+my_file.write("Hello There! Program data stored successfully!")
+my_file.close()
+```
+
+After running this, a file named `program_data.txt` appears inside the `stored_files/` directory containing the text you passed to `.write()`. If the file already existed, its previous contents are **completely replaced**.
+
+> 🖼️ **Visual Suggestion:** Screenshot of a file explorer showing `stored_files/program_data.txt` after the script runs.
+
+### Writing Multiple Lines
+
+Each `.write()` call continues from exactly where the previous one left off — on the same line. To start a new line, insert the **newline character** `\n`:
+
+```python
+my_file = open("stored_files/program_data.txt", "w")
+my_file.write("Hello There! Program data stored successfully! 1")
+my_file.write("\nHello There! Program data stored successfully! 2")
+my_file.close()
+```
+
+The resulting file:
+
+```
+Hello There! Program data stored successfully! 1
+Hello There! Program data stored successfully! 2
+```
+
+Without the `\n`, both strings would have been written on the same line with no separator. The newline character is the standard way to control line breaks when writing files programmatically.
+
+---
+
+## Reading a File
+
+To read an existing file, open it in `"r"` mode:
+
+```python
+my_file = open("stored_files/program_data.txt", "r")
+print(my_file.read())
+my_file.close()
+```
+
+The `.read()` method returns the **entire content** of the file as one string and prints it to the terminal.
+
+### Reading Line by Line with `.readline()`
+
+For files with multiple lines, `.readline()` reads **one line at a time**. Each call advances the internal file pointer to the next line:
+
+```python
+my_file = open("stored_files/program_data.txt", "r")
+
+print(my_file.readline())  # → "Hello There! Program data stored successfully! 1"
+print(my_file.readline())  # → "Hello There! Program data stored successfully! 2"
+
+my_file.close()
+```
+
+The first call returns line 1 and positions the pointer at line 2. The second call picks up from there and returns line 2. Call it a third time on a two-line file, and you'll get an empty string — there's nothing left to read.
+
+### Reading All Lines into a List with `.readlines()`
+
+If you want to process every line in a loop, `.readlines()` returns all lines as a list:
+
+```python
+my_file = open("stored_files/program_data.txt", "r")
+lines = my_file.readlines()
+
+for i, line in enumerate(lines, 1):
+    print(f"Line {i}: {line.strip()}")  # .strip() removes the trailing \n
+
+my_file.close()
+```
+
+Output:
+
+```
+Line 1: Hello There! Program data stored successfully! 1
+Line 2: Hello There! Program data stored successfully! 2
+```
+
+> 🖼️ **Visual Suggestion:** Diagram showing the three read methods — `.read()`, `.readline()`, and `.readlines()` — and what each returns.
+
+---
+
+## Choosing the Right Read Mode
+
+You might wonder: can `w+` or `a+` also read a file? Technically yes, but they come with trade-offs that make them unsuitable for a pure read operation:
+
+- `"w+"` **erases** the existing content when the file opens — you'd be reading an empty file.
+- `"a+"` positions the file pointer at the **end** of the file — reading from there returns nothing.
+
+For reading existing content, always use `"r"` or `"r+"`.
+
+---
+
+## Full Example: Write, Then Read
+
+Here's a complete script that writes data to a file and then reads it back:
+
+```python
+# Step 1: Create the file and write some data
+my_file = open("stored_files/program_data.txt", "w")
+my_file.write("Entry 1: Python is fun!\n")
+my_file.write("Entry 2: File handling is powerful.\n")
+my_file.write("Entry 3: Always close your files.")
+my_file.close()
+
+# Step 2: Open the same file and read its contents
+my_file = open("stored_files/program_data.txt", "r")
+content = my_file.read()
+my_file.close()
+
+print(content)
+```
+
+Output:
+
+```
+Entry 1: Python is fun!
+Entry 2: File handling is powerful.
+Entry 3: Always close your files.
+```
+
+---
+
+## What's Next?
+
+In **Part 2**, we'll cover the remaining file operations and some important best practices:
+
+- **Appending** content to an existing file without overwriting it
+- **Deleting** files using the `os` module
+- **Defensive checks** with `os.path.exists()` to avoid `FileNotFoundError`
+- The **`with` statement** — the professional way to handle files without ever forgetting `.close()`
+- How the **file pointer** works under the hood
+
+*Happy coding. 🐍*
+
+<SeriesNavigation seriesName="File Handling in Python" currentPart="1" totalParts="2" slugs="python-file-handling-p1, python-file-handling-p2" />
