@@ -4,6 +4,14 @@ import { notFound } from "next/navigation";
 import { ArrowRight, Calendar, BookOpen, ArrowLeft } from "lucide-react";
 import { getAllCategoryMetas, getCategoryMeta } from "@/lib/categories";
 import { getAllTutorials } from "@/lib/mdx";
+import { JsonLd } from "@/components/json-ld";
+import {
+  generateBreadcrumbJsonLd,
+  generateCourseJsonLd,
+  generateItemListJsonLd,
+} from "@/lib/json-ld";
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://allaboutcs.com";
 
 interface TopicPageProps {
   params: Promise<{ slug: string }>;
@@ -40,6 +48,24 @@ export default async function TopicPage({ params }: TopicPageProps) {
 
   return (
     <section className="mx-auto max-w-4xl px-4 py-12 sm:px-6">
+      {/* Structured data */}
+      <JsonLd
+        data={generateBreadcrumbJsonLd([
+          { name: "Home", url: SITE_URL },
+          { name: "Topics", url: `${SITE_URL}/topics` },
+          { name: cat.label, url: `${SITE_URL}/topics/${slug}` },
+        ])}
+      />
+      <JsonLd
+        data={generateCourseJsonLd(
+          cat.label,
+          cat.longDescription,
+          slug,
+          tutorials
+        )}
+      />
+      <JsonLd data={generateItemListJsonLd(tutorials)} />
+
       {/* Breadcrumb */}
       <Link
         href="/topics"

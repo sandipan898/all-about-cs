@@ -6,6 +6,7 @@ import { getTutorialBySlug, getTutorialSlugs } from "@/lib/mdx";
 import {
   generateTechArticleJsonLd,
   generateVideoObjectJsonLd,
+  generateBreadcrumbJsonLd,
 } from "@/lib/json-ld";
 import { DualModeLayout } from "@/components/dual-mode-layout";
 import { YouTubeEmbed } from "@/components/youtube-embed";
@@ -100,12 +101,18 @@ export default async function TutorialPage({ params }: TutorialPageProps) {
 
   const techArticleJsonLd = generateTechArticleJsonLd(frontmatter, slug);
   const videoObjectJsonLd = generateVideoObjectJsonLd(frontmatter, slug);
+  const breadcrumbJsonLd = generateBreadcrumbJsonLd([
+    { name: "Home", url: SITE_URL },
+    { name: "Tutorials", url: `${SITE_URL}/tutorials` },
+    { name: frontmatter.title, url: `${SITE_URL}/tutorials/${slug}` },
+  ]);
 
   return (
     <>
       {/* Structured data for search engines and LLMs */}
       <JsonLd data={techArticleJsonLd} />
       <JsonLd data={videoObjectJsonLd} />
+      <JsonLd data={breadcrumbJsonLd} />
 
       <DualModeLayout
         youtubeId={frontmatter.youtubeId}

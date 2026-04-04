@@ -2,6 +2,10 @@ import Link from "next/link";
 import { ArrowRight, BookOpen } from "lucide-react";
 import { getAllCategoryMetas } from "@/lib/categories";
 import { getAllTutorials } from "@/lib/mdx";
+import { JsonLd } from "@/components/json-ld";
+import { generateBreadcrumbJsonLd } from "@/lib/json-ld";
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://allaboutcs.com";
 
 export const metadata = {
   title: "Topics",
@@ -19,6 +23,13 @@ export default function TopicsPage() {
 
   return (
     <section className="mx-auto max-w-5xl px-4 py-12 sm:px-6">
+      <JsonLd
+        data={generateBreadcrumbJsonLd([
+          { name: "Home", url: SITE_URL },
+          { name: "Topics", url: `${SITE_URL}/topics` },
+        ])}
+      />
+
       <div className="mb-12 text-center">
         <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
           Explore Topics

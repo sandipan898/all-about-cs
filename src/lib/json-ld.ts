@@ -1,6 +1,6 @@
-import type { TutorialFrontmatter } from "./mdx";
+import type { TutorialFrontmatter, TutorialMeta } from "./mdx";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://allaboutcs.com";
 const SITE_NAME = "All About CS";
 
 /**
@@ -89,5 +89,118 @@ export function generateWebSiteJsonLd() {
       },
       "query-input": "required name=search_term_string",
     },
+  };
+}
+
+/**
+ * Organization schema — helps Google understand and display your brand.
+ * @see https://schema.org/Organization
+ */
+export function generateOrganizationJsonLd() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: SITE_NAME,
+    url: SITE_URL,
+    logo: `${SITE_URL}/icon-512.png`,
+    description:
+      "A developer learning platform with dual-mode tutorials — read or watch, your choice.",
+    sameAs: [
+      "https://www.youtube.com/@allaboutcs",
+      "https://github.com/sandipan-das",
+      "https://www.linkedin.com/in/sandipandas",
+    ],
+    contactPoint: {
+      "@type": "ContactPoint",
+      contactType: "customer support",
+      url: `${SITE_URL}/about`,
+    },
+  };
+}
+
+/**
+ * BreadcrumbList schema — gives Google breadcrumb-rich snippets.
+ * @see https://schema.org/BreadcrumbList
+ */
+export function generateBreadcrumbJsonLd(
+  items: { name: string; url: string }[]
+) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.name,
+      item: item.url,
+    })),
+  };
+}
+
+/**
+ * ItemList schema for tutorial listing pages — helps Google show carousel-rich results.
+ * @see https://schema.org/ItemList
+ */
+export function generateItemListJsonLd(tutorials: TutorialMeta[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    itemListElement: tutorials.map((t, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: t.title,
+      url: `${SITE_URL}/tutorials/${t.slug}`,
+    })),
+  };
+}
+
+/**
+ * Course schema for topic / category pages.
+ * @see https://schema.org/Course
+ */
+export function generateCourseJsonLd(
+  name: string,
+  description: string,
+  slug: string,
+  tutorials: TutorialMeta[]
+) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Course",
+    name,
+    description,
+    url: `${SITE_URL}/topics/${slug}`,
+    provider: {
+      "@type": "Organization",
+      name: SITE_NAME,
+      url: SITE_URL,
+    },
+    hasCourseInstance: {
+      "@type": "CourseInstance",
+      courseMode: "online",
+      courseWorkload: "PT1H",
+    },
+    numberOfCredits: 0,
+    isAccessibleForFree: true,
+    teaches: tutorials.map((t) => t.title),
+  };
+}
+
+/**
+ * FAQPage schema — can produce rich FAQ snippets in search.
+ * @see https://schema.org/FAQPage
+ */
+export function generateFaqJsonLd(faqs: { question: string; answer: string }[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((faq) => ({
+      "@type": "Question",
+      name: faq.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: faq.answer,
+      },
+    })),
   };
 }

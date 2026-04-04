@@ -9,6 +9,14 @@ import {
   Youtube,
 } from "lucide-react";
 import { getAllTutorials } from "@/lib/mdx";
+import { JsonLd } from "@/components/json-ld";
+import {
+  generateFaqJsonLd,
+  generateBreadcrumbJsonLd,
+  generateItemListJsonLd,
+} from "@/lib/json-ld";
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://allaboutcs.com";
 
 const features = [
   {
@@ -36,6 +44,40 @@ export default function HomePage() {
 
   return (
     <>
+      {/* Structured data: Breadcrumb + FAQ + Latest tutorials list */}
+      <JsonLd
+        data={generateBreadcrumbJsonLd([
+          { name: "Home", url: SITE_URL },
+        ])}
+      />
+      <JsonLd
+        data={generateItemListJsonLd(tutorials)}
+      />
+      <JsonLd
+        data={generateFaqJsonLd([
+          {
+            question: "What is All About CS?",
+            answer:
+              "All About CS is a free developer learning platform offering dual-mode tutorials — you can read the article or watch the video for every tutorial. Topics include Python, data structures, algorithms, and more.",
+          },
+          {
+            question: "Do I need to create an account?",
+            answer:
+              "No account is needed. All tutorials are free and accessible without signup.",
+          },
+          {
+            question: "What topics are covered?",
+            answer:
+              "We cover Python programming, data structures and algorithms (DSA), Big O notation, recursion, sorting, searching, and other core computer science concepts.",
+          },
+          {
+            question: "Are the tutorials beginner-friendly?",
+            answer:
+              "Yes! Every tutorial starts from the basics and builds up. Whether you're a complete beginner or brushing up, there's something for you.",
+          },
+        ])}
+      />
+
       {/* ──────────────────────────────────────────────────────────────
           Hero Section
       ────────────────────────────────────────────────────────────── */}

@@ -1,6 +1,13 @@
 import Link from "next/link";
 import { Calendar, ArrowRight, FolderOpen } from "lucide-react";
 import { getAllTutorials, type TutorialMeta } from "@/lib/mdx";
+import { JsonLd } from "@/components/json-ld";
+import {
+  generateBreadcrumbJsonLd,
+  generateItemListJsonLd,
+} from "@/lib/json-ld";
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://allaboutcs.com";
 
 export const metadata = {
   title: "Tutorials",
@@ -35,6 +42,15 @@ export default function TutorialsPage() {
 
   return (
     <section className="mx-auto max-w-4xl px-4 py-12 sm:px-6">
+      {/* Structured data */}
+      <JsonLd
+        data={generateBreadcrumbJsonLd([
+          { name: "Home", url: SITE_URL },
+          { name: "Tutorials", url: `${SITE_URL}/tutorials` },
+        ])}
+      />
+      <JsonLd data={generateItemListJsonLd(tutorials)} />
+
       <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
         Tutorials
       </h1>
