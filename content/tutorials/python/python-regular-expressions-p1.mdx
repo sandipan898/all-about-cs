@@ -1,0 +1,305 @@
+---
+title: "Regular Expressions in Python — Part 1: Basics, Special Characters, and Essential Functions"
+description: "Learn the fundamentals of regular expressions in Python — understand what regex is, how to use the re module, special characters, quantifiers, and essential functions like search, findall, match, sub, and split with practical examples."
+date: "2026-03-15"
+youtubeId: "4lpF5uzxSxc"
+tags: ["python", "regex", "regular-expressions", "re-module", "text-processing", "intermediate"]
+author: "All About CS"
+published: true
+---
+
+<SeriesNavigation seriesName="Regular Expressions in Python" currentPart="1" totalParts="2" slugs="python-regular-expressions-p1, python-regular-expressions-p2" />
+
+<TableOfContents />
+
+# Regular Expressions in Python — Part 1: Basics, Special Characters, and Essential Functions
+
+Regular expressions — **regex** for short — are one of the most powerful tools in any programmer's arsenal. They let you define **search patterns** that can match, extract, validate, and transform text with surgical precision. Instead of writing dozens of lines of string manipulation code, a single regex pattern can do the job.
+
+Whether you want to validate email addresses, extract phone numbers from text, or clean messy data — regular expressions are your go-to tool. In this first part, we'll start from the basics and build up to some real-world examples that you can use in your projects right away.
+
+<YouTubeEmbed id="4lpF5uzxSxc" title="Regular Expressions in Python — Part 1: Basics, Special Characters, and Essential Functions" />
+
+## What Are Regular Expressions?
+
+A regular expression is a **sequence of characters that defines a search pattern**. Think of it as a super-powered find-and-replace tool. Instead of searching for exact text like `"hello"`, you can search for **patterns** like "any email address" or "any phone number."
+
+For example, if you want to find all email addresses in a document, instead of searching emails one by one, you can use a regex pattern that matches the email structure and then perform a search to find all email addresses by matching with that pattern.
+
+**Why use regex?**
+
+- **Validate input** — emails, phone numbers, passwords, dates
+- **Search and extract** — find specific patterns in large text
+- **Replace and clean** — transform messy data efficiently
+- **Parse text files** — extract structured information from unstructured text
+
+---
+
+## The `re` Module — Getting Started
+
+To use regex in Python, we need to import the built-in `re` module:
+
+```python
+import re
+```
+
+### `re.search()` — Find the First Match
+
+Let's start with the simplest usage of regex — searching. Suppose we have this text:
+
+```python
+import re
+
+text = "Hello, welcome to Python programming. Python is awesome!"
+
+result = re.search("Python", text)
+print(result)
+# <re.Match object; span=(18, 24), match='Python'>
+```
+
+`search()` scans through the entire string and returns the **first match** it finds as a `Match` object. If no match exists, it returns `None`:
+
+```python
+result = re.search("Java", text)
+print(result)  # → None
+```
+
+This returns `None`, because "Java" is not present in our text.
+
+### `re.findall()` — Find All Matches
+
+The `search()` function only finds the first occurrence. But there's another function called `findall()` that finds **all** occurrences:
+
+```python
+result = re.findall("Python", text)
+print(result)  # → ['Python', 'Python']
+```
+
+`findall()` returns a **list** containing all matches. Here it found two occurrences of "Python".
+
+### `re.match()` — Match at the Beginning Only
+
+```python
+text = "Python is awesome"
+
+print(re.match("Python", text))   # → Match object (starts at position 0)
+print(re.match("awesome", text))  # → None ("awesome" isn't at the start)
+```
+
+One important thing to note: `match()` only checks if the pattern matches **at the very beginning** of the string. "awesome" is not at the beginning, so it returns `None`. Remember: `match()` checks from the start, while `search()` scans the entire string.
+
+---
+
+## Special Characters — The Real Power of Regex
+
+Now that we're getting ready to dive deeper, let's unlock the real power of regex with **special characters**, also known as **metacharacters**. These characters have special meanings and help us create flexible patterns.
+
+### The Dot (`.`) — Match Any Character
+
+The dot matches **any single character** except a newline. For example:
+
+```python
+text = "cat, bat, hat, mat"
+
+result = re.findall("c.t", text)
+print(result)  # → ['cat']
+```
+
+The dot matches any character between 'c' and 't', so `c.t` matches "cat", "cot", "c9t", etc.
+
+### Square Brackets (`[]`) — Character Sets
+
+What if we want to match "cat", "bat", and "hat" all together? We can use square brackets to define a set of characters:
+
+```python
+result = re.findall("[cbh]at", text)
+print(result)  # → ['cat', 'bat', 'hat']
+```
+
+`[cbh]at` matches any string starting with `c`, `b`, or `h`, followed by `at`. The `m` in "mat" isn't in the set, so it's excluded.
+
+### Quantifiers — Controlling Repetition
+
+Quantifiers are super useful for matching repeated patterns.
+
+| Quantifier | Meaning | Example |
+|-----------|---------|---------|
+| `*` | Zero or more | `ca*t` matches "ct", "cat", "caat" |
+| `+` | One or more | `ca+t` matches "cat", "caat" (not "ct") |
+| `?` | Zero or one (optional) | `colou?r` matches "color" and "colour" |
+| `{n}` | Exactly n times | `\d{3}` matches "123" |
+| `{n,m}` | Between n and m times | `\d{1,2}` matches "1" or "12" |
+
+The **asterisk** (`*`) denotes zero or more occurrences:
+
+```python
+text = "ct, cat, caat, caaat"
+
+print(re.findall("ca*t", text))   # → ['ct', 'cat', 'caat', 'caaat']
+```
+
+It matches "ct", "cat", "caat", and "caaat" because the asterisk allows zero or more occurrences of 'a'.
+
+The **plus** (`+`) requires at least one or more occurrences:
+
+```python
+print(re.findall("ca+t", text))   # → ['cat', 'caat', 'caaat']
+```
+
+This time "ct" is not matching because plus requires at least one 'a'.
+
+The **question mark** (`?`) matches zero or one occurrence, making something optional:
+
+```python
+text = "The color of the shirt and the colour of the wall"
+
+print(re.findall("colou?r", text))  # → ['color', 'colour']
+```
+
+With a question mark after the 'u', it matches both "color" and "colour" because the 'u' is marked optional.
+
+**Curly braces** (`{}`) let you specify the exact number of occurrences:
+
+```python
+text = "File1 File22 File333"
+
+result = re.findall(r"File\d{1,2}", text)
+print(result)  # → ['File1', 'File22', 'File33']
+```
+
+Here, `\d` indicates any digit, and the curly braces `{1,2}` specify we want only one or two digits. So it matches "File1", "File22", and "File33" — taking only 1 or 2 digits after 'File'.
+
+### Common Special Sequences
+
+There are some commonly used special sequences you should know:
+
+| Sequence | Matches |
+|----------|---------|
+| `\d` | Any digit (0–9) |
+| `\D` | Any non-digit |
+| `\w` | Any word character (letters, digits, underscore) |
+| `\W` | Any non-word character |
+| `\s` | Any whitespace (space, tab, newline) |
+| `\S` | Any non-whitespace |
+| `^` | Start of string |
+| `$` | End of string |
+
+<Callout type="info">
+**Always use raw strings (`r"..."`) for regex patterns.** The `r` prefix tells Python to treat backslashes literally. Without it, `\d` might be interpreted as an escape sequence before regex even sees it. This is the single most common regex gotcha in Python.
+</Callout>
+
+---
+
+## More `re` Functions
+
+We've already seen `search()`, `findall()`, and `match()`. Now let's explore some more functions in the `re` module that you'll use most often.
+
+### `re.sub()` — Search and Replace
+
+The `sub()` function is used for substitution — replacing matched patterns:
+
+```python
+text = "I love Java. Java is great."
+
+result = re.sub("Java", "Python", text)
+print(result)  # → I love Python. Python is great.
+```
+
+`sub()` replaces **all occurrences** of the pattern. You can limit replacements with the `count` parameter:
+
+```python
+result = re.sub("Java", "Python", text, count=1)
+print(result)  # → I love Python. Java is great.
+```
+
+### `re.split()` — Split on a Pattern
+
+The `split()` function splits a string based on a pattern:
+
+```python
+text = "apple,banana;orange:grape"
+
+result = re.split(r"[,;:]", text)
+print(result)  # → ['apple', 'banana', 'orange', 'grape']
+```
+
+This splits the string wherever it finds a comma, semicolon, or colon — far more flexible than the basic `str.split()` method.
+
+---
+
+## Practical Examples
+
+Let's practice what we've learned with some real examples!
+
+### Extracting Words from Messy Text
+
+```python
+text = "Hello !@ How %#% are *# you doing @ today>"
+
+words = re.findall(r"\w+", text)
+print(words)  # → ['Hello', 'How', 'are', 'you', 'doing', 'today']
+```
+
+The `\w+` pattern matches one or more word characters, cleanly extracting all the words while ignoring other unwanted characters.
+
+### Simple Email Validator
+
+```python
+email = "user@example.com"
+
+pattern = r"\w+@\w+\.\w+"
+result = re.search(pattern, email)
+print("Valid!" if result else "Invalid!")
+# → Valid!
+```
+
+This checks if the text matches a basic email pattern — a word followed by `@`, then another word, a dot, and another word. It prints "Valid!" if there's a match, else "Invalid!".
+
+---
+
+## Quick Reference
+
+```python
+import re
+
+# Search for first match
+re.search(r"pattern", text)
+
+# Find all matches
+re.findall(r"pattern", text)
+
+# Match at start only
+re.match(r"pattern", text)
+
+# Search and replace
+re.sub(r"pattern", "replacement", text)
+
+# Split on pattern
+re.split(r"pattern", text)
+```
+
+| Pattern | Matches |
+|---------|---------|
+| `.` | Any character (except newline) |
+| `\d` | Digit (0-9) |
+| `\w` | Word character (a-z, A-Z, 0-9, _) |
+| `\s` | Whitespace |
+| `[abc]` | Any of a, b, or c |
+| `[^abc]` | Not a, b, or c |
+| `a*` | Zero or more `a` |
+| `a+` | One or more `a` |
+| `a?` | Zero or one `a` |
+| `a{3}` | Exactly 3 `a` |
+| `a{2,5}` | 2 to 5 `a` |
+| `^` | Start of string |
+| `$` | End of string |
+
+---
+
+## What's Next?
+
+We've covered the fundamentals of regex — the `re` module and its main functions (`search`, `findall`, `match`, `sub`, `split`), special characters and quantifiers for creating flexible patterns, and some real-world examples.
+
+In **Part 2**, we'll continue with advanced features — **groups and backreferences** for capturing and reusing parts of a match, **regex flags** for controlling match behavior, and we'll build a complete **password strength validator project** step by step!
+
+*Happy coding. 🐍*

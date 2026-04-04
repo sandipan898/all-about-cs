@@ -88,7 +88,7 @@ export default function HomePage() {
               <ArrowRight className="h-4 w-4" />
             </Link>
             <a
-              href="https://youtube.com"
+              href="hhttps://www.youtube.com/@allaboutcs"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded-xl border border-border bg-surface/60 px-6 py-3 text-sm font-medium text-foreground backdrop-blur-sm transition-colors hover:bg-surface-hover"

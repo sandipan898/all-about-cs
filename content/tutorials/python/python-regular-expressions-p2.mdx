@@ -1,0 +1,330 @@
+---
+title: "Regular Expressions in Python — Part 2: Groups, Backreferences, Flags, and Password Validator Project"
+description: "Dive deep into advanced regex features — learn groups and backreferences for capturing and reusing parts of a match, regex flags for controlling match behavior, and build a practical password strength validator project."
+date: "2026-03-15"
+youtubeId: "_AMlLN3TiwE"
+tags: ["python", "regex", "regular-expressions", "groups", "backreferences", "flags", "intermediate"]
+author: "All About CS"
+published: true
+---
+
+<SeriesNavigation seriesName="Regular Expressions in Python" currentPart="2" totalParts="2" slugs="python-regular-expressions-p1, python-regular-expressions-p2" />
+
+<TableOfContents />
+
+# Regular Expressions in Python — Part 2: Groups, Backreferences, Flags, and Password Validator Project
+
+In Part 1, we started our journey with regular expressions in Python. We learned what regex is, how to use the `re` module, special characters, quantifiers, and explored essential functions such as `search`, `findall`, `match`, `sub`, and `split` — with practical examples like word extraction and email validation.
+
+Today, we're going to dive deep into some really powerful advanced features of regex. We'll explore **groups and backreferences**, learn about **regex flags**, and most importantly, we'll build a practical **password strength validator project** that you can use in your real applications!
+
+<YouTubeEmbed id="_AMlLN3TiwE" title="Regular Expressions in Python — Part 2: Groups, Backreferences, Flags, and Password Validator Project" />
+
+## Groups and Backreferences — Advanced Pattern Magic
+
+Let's start with one of the most powerful features of regex: **groups and backreferences**. Groups allow us to capture parts of a match.
+
+We create groups using **parentheses**. Let's see an example:
+
+### Capturing Groups
+
+```python
+import re
+
+text = "My email is sandipan@example.com"
+
+pattern = r"(\w+)@(\w+)\.(\w+)"
+match = re.search(pattern, text)
+
+if match:
+    print("Full match:", match.group(0))   # → sandipan@example.com
+    print("Username:", match.group(1))     # → sandipan
+    print("Domain:", match.group(2))       # → example
+    print("Extension:", match.group(3))    # → com
+```
+
+Here we've created three groups of expression using parentheses:
+- The **first group** (`\w+`) captures the username part
+- The **second group** (another `\w+`) captures the domain part
+- The **third group** captures the extension
+
+We can access each group separately using the `group()` method with the group number:
+- `group(0)` — the entire match
+- `group(1)` — first set of parentheses (username)
+- `group(2)` — second set (domain)
+- `group(3)` — third set (extension)
+
+This is incredibly useful when you want to extract specific portions of matched text.
+
+---
+
+## Backreferences — Reusing Captured Groups
+
+Now here's where it gets really interesting: **backreferences** — reusing captured groups. Let's convert a date format.
+
+Consider we have a text like this:
+
+```python
+text = "The date is 25-12-2024"
+
+pattern = r"(\d{2})-(\d{2})-(\d{4})"
+```
+
+Here we've used `\d{2}` to capture the first 2 digits — that's the day. Then a hyphen. Again `\d{2}` to capture the next 2 digits — the month. And then `\d{4}` to capture the last 4 digits — the year.
+
+Now we can use the `sub` function to replace the captured pattern with a new format:
+
+```python
+result = re.sub(pattern, r"\3/\2/\1", text)
+print(result)  # → The date is 2024/12/25
+```
+
+Here in the `sub` function, we're passing the group numbers in a specific format:
+- `\3` refers to the third group, which captured the year — that's `2024`
+- `\2` refers to the second group, which captured the month — that's `12`
+- `\1` refers to the first group, the day — that's `25`
+
+We're rearranging the captured pieces with slashes: year/month/day, instead of day-month-year. This technique is super powerful for data transformation tasks — like converting date formats, reorganizing phone numbers, or restructuring any patterned text.
+
+### Named Groups
+
+For complex patterns, numbered groups become hard to read. Named groups solve this:
+
+```python
+pattern = r"(?P<day>\d{2})-(?P<month>\d{2})-(?P<year>\d{4})"
+match = re.search(pattern, "25-12-2024")
+
+if match:
+    print(match.group("day"))    # → 25
+    print(match.group("month"))  # → 12
+    print(match.group("year"))   # → 2024
+```
+
+---
+
+## Regex Flags — Controlling Match Behavior
+
+Let's continue and learn about **regex flags**. Flags modify how the pattern matching behaves.
+
+### `re.IGNORECASE` — Case-Insensitive Matching
+
+Till now we've seen that the matching we perform is case sensitive. What if we want to ignore the case? The `IGNORECASE` flag makes matching case-insensitive:
+
+```python
+text = "Python is AWESOME"
+
+result = re.findall("awesome", text, re.IGNORECASE)
+print(result)  # → ['AWESOME']
+```
+
+This matched upper-cased "AWESOME" even though we searched for lower-cased "awesome". The `IGNORECASE` flag is really helpful when you don't want case sensitivity in your pattern matching.
+
+### Other Useful Flags
+
+There are other useful flags too:
+
+| Flag | Effect |
+|------|--------|
+| `re.IGNORECASE` (or `re.I`) | Case-insensitive matching |
+| `re.MULTILINE` (or `re.M`) | `^` and `$` match at line boundaries, not just string boundaries |
+| `re.DOTALL` (or `re.S`) | `.` matches newline characters too |
+| `re.VERBOSE` (or `re.X`) | Allows comments and whitespace in patterns for readability |
+
+`IGNORECASE` is definitely the most commonly used one, especially for user input validation.
+
+### Verbose Mode for Complex Patterns
+
+```python
+email_pattern = re.compile(r"""
+    ^                   # Start of string
+    [\w.+-]+            # Username (word chars, dots, plus, hyphen)
+    @                   # Literal @ symbol
+    [\w-]+              # Domain name
+    \.                  # Literal dot
+    [a-zA-Z]{2,}        # TLD (at least 2 letters)
+    $                   # End of string
+""", re.VERBOSE)
+
+print(email_pattern.match("user@example.com"))   # → Match
+print(email_pattern.match("invalid@.com"))        # → None
+```
+
+---
+
+## Project: Password Strength Validator
+
+Now let's put everything we've learned into practice with a real-world project! Let's build a practical password validator that checks if a password is strong enough using regex.
+
+We'll check for the following requirements in a password. It should:
+- Be at least 8 characters long
+- Contain at least one uppercase letter
+- Contain at least one lowercase letter
+- Contain at least one digit
+- Contain at least one special character
+
+```python
+import re
+
+def validate_password(password):
+    """Check password strength against common security rules."""
+    if len(password) < 8:
+        return "Password must be at least 8 characters long"
+
+    if not re.search(r"[A-Z]", password):
+        return "Password must contain at least one uppercase letter"
+
+    if not re.search(r"[a-z]", password):
+        return "Password must contain at least one lowercase letter"
+
+    if not re.search(r"\d", password):
+        return "Password must contain at least one digit"
+
+    if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", password):
+        return "Password must contain at least one special character"
+
+    return "Strong password!"
+```
+
+Let's break down each condition:
+
+- The **first condition** checks if the password length is less than 8 characters.
+- The **second condition** checks whether the password contains any uppercase letters between A to Z using `[A-Z]`. Notice we're using the `not` operator to negate it — if the password doesn't meet this requirement, it enters the `if` block and returns the failure message.
+- Similarly, the **third condition** checks for any lowercase alphabets with `[a-z]`.
+- The **fourth condition** checks for any digits with `\d` — remember, `\d` matches any digit from 0 to 9.
+- And the **fifth condition** checks for any special characters by mentioning a set of special characters like `!`, `@`, `#`, `$`, `%`, `&`, `*`, and so on.
+- Finally, if none of the negative conditions are satisfied, it returns "Strong password!".
+
+Let's test it:
+
+```python
+print(validate_password("weak"))         # → Password must be at least 8 characters long
+print(validate_password("StrongPass1!")) # → Strong password!
+print(validate_password("noDigits!"))    # → Password must contain at least one digit
+```
+
+The first one fails — it's too short. The second one passes all checks: it has uppercase letters, lowercase letters, a digit, a special character, and is longer than 8 characters. The third one fails because it doesn't have any digits.
+
+You can see how regex makes this validation clean and efficient. Without regex, we'd need to write much more complex loops and conditions!
+
+### Enhanced Version: Reporting All Issues
+
+Here's an improved version that reports **all** issues at once instead of stopping at the first failure:
+
+```python
+import re
+
+def validate_password(password):
+    """Check password strength against common security rules."""
+    checks = [
+        (len(password) >= 8, "Must be at least 8 characters long"),
+        (re.search(r"[A-Z]", password), "Must contain at least one uppercase letter"),
+        (re.search(r"[a-z]", password), "Must contain at least one lowercase letter"),
+        (re.search(r"\d", password), "Must contain at least one digit"),
+        (re.search(r"[!@#$%^&*(),.?\":{}|<>]", password),
+         "Must contain at least one special character"),
+    ]
+
+    failures = [msg for passed, msg in checks if not passed]
+
+    if failures:
+        return {"strong": False, "issues": failures}
+    return {"strong": True, "issues": []}
+
+
+# Test with different passwords
+test_passwords = ["weak", "NoDigits!", "short1!", "StrongPass1!", "Tr0ub4dor&3"]
+
+for pwd in test_passwords:
+    result = validate_password(pwd)
+    status = "STRONG" if result["strong"] else "WEAK"
+    print(f"  '{pwd}' → {status}")
+    for issue in result["issues"]:
+        print(f"    - {issue}")
+```
+
+Output:
+
+```
+  'weak' → WEAK
+    - Must be at least 8 characters long
+    - Must contain at least one uppercase letter
+    - Must contain at least one digit
+    - Must contain at least one special character
+  'NoDigits!' → WEAK
+    - Must contain at least one digit
+  'short1!' → WEAK
+    - Must be at least 8 characters long
+    - Must contain at least one uppercase letter
+  'StrongPass1!' → STRONG
+  'Tr0ub4dor&3' → STRONG
+```
+
+<Callout type="info">
+**Challenge:** Try extending the password validator by adding a check for consecutive repeated characters — like "aaa" or "111" — which make passwords weaker. You can use the backreference pattern `r"(.)\1{2,}"` to detect three or more consecutive identical characters!
+</Callout>
+
+---
+
+## Regex Cheat Sheet
+
+```python
+import re
+
+# Search for first match
+re.search(r"pattern", text)
+
+# Find all matches
+re.findall(r"pattern", text)
+
+# Match at start only
+re.match(r"pattern", text)
+
+# Search and replace
+re.sub(r"pattern", "replacement", text)
+
+# Split on pattern
+re.split(r"pattern", text)
+
+# Compile for reuse (performance)
+pattern = re.compile(r"pattern", re.IGNORECASE)
+pattern.findall(text)
+```
+
+| Pattern | Matches |
+|---------|---------|
+| `.` | Any character (except newline) |
+| `\d` | Digit (0-9) |
+| `\w` | Word character (a-z, A-Z, 0-9, _) |
+| `\s` | Whitespace |
+| `[abc]` | Any of a, b, or c |
+| `[^abc]` | Not a, b, or c |
+| `a*` | Zero or more `a` |
+| `a+` | One or more `a` |
+| `a?` | Zero or one `a` |
+| `a{3}` | Exactly 3 `a` |
+| `a{2,5}` | 2 to 5 `a` |
+| `^` | Start of string |
+| `$` | End of string |
+| `(...)` | Capture group |
+| `(?P<name>...)` | Named capture group |
+| `\1`, `\2` | Backreference to captured group |
+
+---
+
+## What We Covered in This Series
+
+Across both parts, you now have a complete understanding of regular expressions in Python:
+
+**Part 1** — Basics: What regular expressions are, the `re` module and its main functions (`search`, `findall`, `match`, `sub`, `split`), special characters and quantifiers, and practical examples like word extraction and email validation.
+
+**Part 2** — Advanced: Groups and backreferences for capturing and reusing parts of a match, backreferences for data transformation like converting date formats, regex flags (especially `IGNORECASE` for case-insensitive matching), and a complete password validator project.
+
+Regular expressions are incredibly powerful — whether it's data validation, text processing, web scraping, log file analysis, or pattern matching. Now you have the skills to use them in your own projects!
+
+---
+
+## What's Next?
+
+In the next tutorial, we'll explore **Higher-Order Functions** — `map`, `filter`, `reduce`, `zip`, and `sorted` — Python's powerful functional programming tools that transform how you process collections of data.
+
+*Happy coding. 🐍*
