@@ -3,11 +3,11 @@
 import { useEffect, useState, useCallback } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   Menu,
   X,
-  BookOpen,
   GraduationCap,
   Layers,
   Info,
@@ -105,7 +105,13 @@ export function MobileNav() {
                 onClick={close}
                 className="flex items-center gap-2"
               >
-                <BookOpen className="h-5 w-5 text-primary" />
+                <Image
+                  src="/logo.png"
+                  alt="All About CS logo"
+                  width={28}
+                  height={28}
+                  className="h-7 w-7 rounded-full"
+                />
                 <span className="text-base font-bold tracking-tight">
                   All About <span className="text-primary">CS</span>
                 </span>

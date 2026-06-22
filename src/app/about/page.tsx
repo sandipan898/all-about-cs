@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import {
   ArrowRight,
-  BookOpen,
   Youtube,
   Linkedin,
   Github,
@@ -102,8 +102,15 @@ export default function AboutPage() {
         </div>
 
         <div className="mx-auto flex max-w-4xl flex-col items-center px-6 pb-16 pt-20 text-center sm:pt-28 md:pb-24">
-          <div className="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">
-            <BookOpen className="h-8 w-8 text-primary" />
+          <div className="mb-6 inline-flex h-16 w-16 items-center justify-center overflow-hidden rounded-full">
+            <Image
+              src="/logo.png"
+              alt="All About CS logo"
+              width={64}
+              height={64}
+              priority
+              className="h-16 w-16 rounded-full"
+            />
           </div>
 
           <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">

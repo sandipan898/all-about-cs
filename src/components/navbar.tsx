@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { BookOpen, Sparkles, LogIn } from "lucide-react";
+import Image from "next/image";
+import { Sparkles, LogIn } from "lucide-react";
 import { MobileNav } from "./mobile-nav";
 import { SearchTrigger } from "./search-trigger";
 import { ThemeToggle } from "./theme-toggle";
@@ -10,7 +11,14 @@ export function Navbar() {
       <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 group">
-          <BookOpen className="h-6 w-6 text-primary transition-transform group-hover:scale-110" />
+          <Image
+            src="/logo.png"
+            alt="All About CS logo"
+            width={32}
+            height={32}
+            priority
+            className="h-8 w-8 rounded-full transition-transform group-hover:scale-110"
+          />
           <span className="text-lg font-bold tracking-tight">
             All About <span className="text-primary">CS</span>
           </span>

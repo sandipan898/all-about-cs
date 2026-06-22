@@ -10,6 +10,9 @@ export async function GET(request: NextRequest) {
     searchParams.get("description") ??
     "Free dual-mode tutorials — read or watch, your choice.";
 
+  const origin = new URL(request.url).origin;
+  const logoSrc = `${origin}/logo.png`;
+
   return new ImageResponse(
     (
       <div
@@ -34,22 +37,18 @@ export async function GET(request: NextRequest) {
             marginBottom: "40px",
           }}
         >
-          <div
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={logoSrc}
+            alt="All About CS logo"
+            width={48}
+            height={48}
             style={{
               width: "48px",
               height: "48px",
-              borderRadius: "12px",
-              background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: "24px",
-              color: "white",
-              fontWeight: 800,
+              borderRadius: "9999px",
             }}
-          >
-            A
-          </div>
+          />
           <span
             style={{
               fontSize: "24px",

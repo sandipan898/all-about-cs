@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { BookOpen, Github, Twitter, Youtube } from "lucide-react";
+import Image from "next/image";
+import { Github, Twitter, Youtube } from "lucide-react";
 
 const footerLinks = {
   Platform: [
@@ -32,7 +33,13 @@ export function Footer() {
           {/* Brand */}
           <div className="space-y-4">
             <Link href="/" className="flex items-center gap-2">
-              <BookOpen className="h-5 w-5 text-primary" />
+              <Image
+                src="/logo.png"
+                alt="All About CS logo"
+                width={28}
+                height={28}
+                className="h-7 w-7 rounded-full"
+              />
               <span className="text-base font-bold tracking-tight">
                 All About CS
               </span>
