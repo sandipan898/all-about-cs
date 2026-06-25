@@ -131,3 +131,27 @@ pre {
   max-width: 100%;
   height: auto;
 }
+
+/* ── Shiki dual-theme code blocks (RunnableSnippet / playground) ──────
+   Shiki emits both colors as CSS variables on every token. Default is the
+   light theme; under `.dark` we swap to the dark variables. These blocks live
+   inside a `not-prose` wrapper, so the `.prose pre` overrides above never apply. */
+.shiki,
+.shiki span {
+  color: var(--shiki-light);
+  background-color: var(--shiki-light-bg);
+}
+
+.dark .shiki,
+.dark .shiki span {
+  color: var(--shiki-dark) !important;
+  background-color: var(--shiki-dark-bg) !important;
+}
+
+.shiki {
+  margin: 0;
+  padding: 1rem 1.25rem;
+  overflow-x: auto;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}

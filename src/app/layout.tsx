@@ -6,6 +6,8 @@ import { JsonLd } from "@/components/json-ld";
 import { SearchProvider } from "@/components/search-trigger";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ScrollToTop } from "@/components/scroll-to-top";
+import { GlobalRunnerProvider } from "@/components/playground/global-runner-context";
+import { GlobalRunnerDrawer } from "@/components/playground/global-runner-drawer";
 import {
   generateWebSiteJsonLd,
   generateOrganizationJsonLd,
@@ -118,9 +120,12 @@ export default function RootLayout({
           <JsonLd data={generateWebSiteJsonLd()} />
           <JsonLd data={generateOrganizationJsonLd()} />
           <SearchProvider>
-            <Navbar />
-            <main className="flex-1">{children}</main>
-            <Footer />
+            <GlobalRunnerProvider>
+              <Navbar />
+              <main className="flex-1">{children}</main>
+              <Footer />
+              <GlobalRunnerDrawer />
+            </GlobalRunnerProvider>
           </SearchProvider>
           <ScrollToTop />
         </ThemeProvider>

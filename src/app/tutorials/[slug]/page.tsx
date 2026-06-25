@@ -13,6 +13,8 @@ import { YouTubeEmbed } from "@/components/youtube-embed";
 import { Callout } from "@/components/callout";
 import { TableOfContents } from "@/components/table-of-contents";
 import { SeriesNavigation } from "@/components/series-navigation";
+import { RunnableSnippet } from "@/components/playground/runnable-snippet";
+import { MdxPre } from "@/components/playground/mdx-code-block";
 import { JsonLd } from "@/components/json-ld";
 
 interface TutorialPageProps {
@@ -30,6 +32,10 @@ const mdxComponents = {
   Callout,
   TableOfContents,
   SeriesNavigation,
+  // Phase 2 — SEO-friendly static code block that upgrades to a runnable editor.
+  RunnableSnippet,
+  // Every fenced code block becomes runnable (or statically highlighted) here.
+  pre: MdxPre,
 };
 
 // ── Static Params ──────────────────────────────────────────────────

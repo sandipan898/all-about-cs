@@ -12,6 +12,8 @@ export interface TutorialFrontmatter {
   tags?: string[];
   author?: string;
   published?: boolean;
+  /** Opt-in flag for tutorials that embed interactive <RunnableSnippet /> blocks. */
+  playground?: boolean;
 }
 
 export interface TutorialMeta extends TutorialFrontmatter {

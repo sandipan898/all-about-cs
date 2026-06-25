@@ -14,6 +14,7 @@ import {
   Sparkles,
   LogIn,
   Search,
+  Terminal,
 } from "lucide-react";
 import { useSearch } from "./search-trigger";
 import { ThemeToggle } from "./theme-toggle";
@@ -21,6 +22,7 @@ import { ThemeToggle } from "./theme-toggle";
 const navLinks = [
   { href: "/tutorials", label: "Tutorials", icon: GraduationCap },
   { href: "/topics", label: "Topics", icon: Layers },
+  { href: "/playground", label: "Playground", icon: Terminal },
   { href: "/about", label: "About", icon: Info },
 ];
 

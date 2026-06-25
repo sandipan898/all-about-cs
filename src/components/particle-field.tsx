@@ -34,11 +34,12 @@ void main() {
 }
 `;
 
-const COUNT = 150;
-const MOUSE_RADIUS = 160;
+const COUNT = 100;
+const MOUSE_RADIUS = 140;
 const REPEL_STRENGTH = 0.06;
 const RETURN_SPEED = 0.015;
-const BASE_SIZE = 10.0;
+const BASE_SIZE = 12.0;
+const DRIFT_SPEED = 0.38; // px/frame, slow ambient float
 
 interface Particle {
   x: number;
@@ -47,6 +48,8 @@ interface Particle {
   oy: number;
   vx: number;
   vy: number;
+  dx: number; // origin drift velocity
+  dy: number;
   size: number;
   alpha: number;
 }
@@ -130,10 +133,19 @@ export default function ParticleField() {
     const alphaData = new Float32Array(COUNT);
 
     // Init particles
+    let prevW = 0;
     function resize() {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       const w = parent.clientWidth;
       const h = parent.clientHeight;
+
+      // Mobile browsers fire resize when the address bar hides/shows during
+      // scroll (height changes, width stays). Ignore these so particles don't
+      // reset/glitch. Only react when the width meaningfully changes.
+      const widthChanged = Math.abs(w - prevW) > 1;
+      const firstRun = prevW === 0;
+      if (!firstRun && !widthChanged) return;
+
       canvas!.width = w * dpr;
       canvas!.height = h * dpr;
       canvas!.style.width = w + "px";
@@ -141,14 +153,20 @@ export default function ParticleField() {
       gl!.viewport(0, 0, canvas!.width, canvas!.height);
       gl!.uniform2f(uRes, w, h);
 
+      prevW = w;
+
       // Respawn particles to fill viewport
       const particles: Particle[] = [];
       for (let i = 0; i < COUNT; i++) {
         const x = Math.random() * w;
         const y = Math.random() * h;
+        const angle = Math.random() * Math.PI * 2;
+        const speed = (0.4 + Math.random() * 0.6) * DRIFT_SPEED;
         particles.push({
           x, y, ox: x, oy: y,
           vx: 0, vy: 0,
+          dx: Math.cos(angle) * speed,
+          dy: Math.sin(angle) * speed,
           size: BASE_SIZE + Math.random() * 6,
           alpha: 0.5 + Math.random() * 0.5,
         });
@@ -226,9 +244,19 @@ export default function ParticleField() {
       const particles = particlesRef.current;
       const mx = mouseRef.current.x;
       const my = mouseRef.current.y;
+      const w = parent.clientWidth;
+      const h = parent.clientHeight;
 
       for (let i = 0; i < COUNT; i++) {
         const p = particles[i];
+
+        // Slow ambient drift of the origin (wraps around edges)
+        p.ox += p.dx;
+        p.oy += p.dy;
+        if (p.ox < -20) { p.ox += w + 40; p.x += w + 40; }
+        else if (p.ox > w + 20) { p.ox -= w + 40; p.x -= w + 40; }
+        if (p.oy < -20) { p.oy += h + 40; p.y += h + 40; }
+        else if (p.oy > h + 20) { p.oy -= h + 40; p.y -= h + 40; }
 
         // Mouse repulsion
         const dx = p.x - mx;
@@ -240,7 +268,7 @@ export default function ParticleField() {
           p.vy += (dy / dist) * force * MOUSE_RADIUS;
         }
 
-        // Return to origin
+        // Return to (the moving) origin
         p.vx += (p.ox - p.x) * RETURN_SPEED;
         p.vy += (p.oy - p.y) * RETURN_SPEED;
 

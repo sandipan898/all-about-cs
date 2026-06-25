@@ -44,6 +44,14 @@ export function Navbar() {
           </li>
           <li>
             <Link
+              href="/playground"
+              className="text-muted transition-colors hover:text-foreground"
+            >
+              Playground
+            </Link>
+          </li>
+          <li>
+            <Link
               href="/about"
               className="text-muted transition-colors hover:text-foreground"
             >

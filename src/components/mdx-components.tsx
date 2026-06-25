@@ -12,6 +12,11 @@ import { useDualMode } from "./dual-mode-provider";
  * The YouTubeEmbed used inside MDX is a *context-unaware* version —
  * it always renders the collapsed card in Read mode and the sticky
  * player in Watch mode, powered by DualModeProvider from the layout.
+ *
+ * NOTE: Runnable code samples (`<RunnableSnippet />`) are an async **server**
+ * component and are registered only in the server MDX map in
+ * `app/tutorials/[slug]/page.tsx` — they cannot be referenced from this
+ * client-side hook.
  */
 export function useMDXComponents(): MDXComponents {
   return {

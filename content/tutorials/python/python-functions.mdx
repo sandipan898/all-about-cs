@@ -94,6 +94,17 @@ print(f"You pay: ${result}")  # You pay: $85.0
 
 Once a `return` statement executes, the function exits immediately. Any code after it inside the same function will not run.
 
+**Try it yourself** — tweak the `price` and `discount`, then press **Run**:
+
+```python
+def get_discounted_price(price, discount):
+    final_price = price - (price * discount / 100)
+    return final_price
+
+result = get_discounted_price(100, 15)
+print(f"You pay: ${result}")
+```
+
 > 🖼️ **Visual Suggestion:** An input/output diagram — `price` and `discount` flow into the function box, and `final_price` flows out via the return arrow.
 
 ---

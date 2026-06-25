@@ -36,6 +36,17 @@ function factorial(n) {
 factorial(5); // 5 × 4 × 3 × 2 × 1 = 120
 ```
 
+**Try it yourself** — edit `n`, then press **Run** to see the result:
+
+```javascript
+function factorial(n) {
+  if (n <= 1) return 1;        // base case
+  return n * factorial(n - 1); // recursive step
+}
+
+console.log(factorial(5));
+```
+
 ### What Happens on the Call Stack?
 
 ```
