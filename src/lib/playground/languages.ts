@@ -5,7 +5,7 @@
  * from this map so adding a language is a one-line change.
  */
 
-import type { ExecutionTarget } from "./types";
+// import type { ExecutionTarget } from "./types";
 
 export interface LanguageDef {
   /** Stable id used in MDX (`language="..."`) and the registry key. */
@@ -13,7 +13,7 @@ export interface LanguageDef {
   /** Human label shown in the playground language selector. */
   label: string;
   /** Where this language executes. */
-  target: ExecutionTarget;
+  target: string;
   /** Shiki grammar id used for static build-time highlighting. */
   shiki: string;
   /**

@@ -17,26 +17,27 @@ import type {
 const PYODIDE_VERSION = "0.27.2";
 const PYODIDE_CDN = `https://cdn.jsdelivr.net/pyodide/v${PYODIDE_VERSION}/full/`;
 
-/** Minimal structural type for the bits of Pyodide we touch. */
+/** Minimal structural type matching the official Pyodide configuration */
 interface PyodideInstance {
   runPythonAsync: (code: string) => Promise<unknown>;
   setStdout: (opts: { batched: (text: string) => void }) => void;
   setStderr: (opts: { batched: (text: string) => void }) => void;
+  setStdin: (opts: any) => void; // Added to satisfy the official package declaration
 }
 
-declare global {
-  interface Window {
-    loadPyodide?: (opts: { indexURL: string }) => Promise<PyodideInstance>;
-    /** Module-level singleton promise so the heavy runtime loads once per tab. */
-    __aacsPyodide?: Promise<PyodideInstance>;
-  }
+// Bypasses global strict matching by extending standard record parameters
+interface ExtendedWindow {
+  loadPyodide?: (opts: { indexURL: string }) => Promise<any>;
+  __aacsPyodide?: Promise<any>;
 }
 
 /** Inject the Pyodide loader script exactly once. */
 function ensurePyodideScript(): Promise<void> {
   return new Promise((resolve, reject) => {
     if (typeof window === "undefined") return reject(new Error("SSR"));
-    if (window.loadPyodide) return resolve();
+    
+    const win = window as ExtendedWindow;
+    if (win.loadPyodide) return resolve();
 
     const existing = document.querySelector<HTMLScriptElement>(
       "script[data-pyodide]"
@@ -59,12 +60,14 @@ function ensurePyodideScript(): Promise<void> {
 
 /** Boot (or reuse) a single Pyodide interpreter for the whole tab. */
 function getPyodide(): Promise<PyodideInstance> {
-  if (window.__aacsPyodide) return window.__aacsPyodide;
-  window.__aacsPyodide = ensurePyodideScript().then(() => {
-    if (!window.loadPyodide) throw new Error("Pyodide loader unavailable.");
-    return window.loadPyodide({ indexURL: PYODIDE_CDN });
+  const win = window as ExtendedWindow;
+  if (win.__aacsPyodide) return win.__aacsPyodide;
+  
+  win.__aacsPyodide = ensurePyodideScript().then(() => {
+    if (!win.loadPyodide) throw new Error("Pyodide loader unavailable.");
+    return win.loadPyodide({ indexURL: PYODIDE_CDN });
   });
-  return window.__aacsPyodide;
+  return win.__aacsPyodide;
 }
 
 // ── JavaScript runtime (sandboxed Web Worker) ──────────────────────
