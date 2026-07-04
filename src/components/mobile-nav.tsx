@@ -15,6 +15,7 @@ import {
   LogIn,
   Search,
   Terminal,
+  BarChart3,
 } from "lucide-react";
 import { useSearch } from "./search-trigger";
 import { ThemeToggle } from "./theme-toggle";
@@ -23,6 +24,7 @@ const navLinks = [
   { href: "/tutorials", label: "Tutorials", icon: GraduationCap },
   { href: "/topics", label: "Topics", icon: Layers },
   { href: "/playground", label: "Playground", icon: Terminal },
+  { href: "/visualizer", label: "Visualizer", icon: BarChart3 },
   { href: "/about", label: "About", icon: Info },
 ];
 

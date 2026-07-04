@@ -133,13 +133,13 @@ pre {
 }
 
 /* ── Shiki dual-theme code blocks (RunnableSnippet / playground) ──────
-   Shiki emits both colors as CSS variables on every token. Default is the
-   light theme; under `.dark` we swap to the dark variables. These blocks live
-   inside a `not-prose` wrapper, so the `.prose pre` overrides above never apply. */
+   Shiki emits both colors as CSS variables on every token. Since code blocks
+   ALWAYS have a dark background (regardless of site theme), we force the dark
+   Shiki variables in both light and dark mode. */
 .shiki,
 .shiki span {
-  color: var(--shiki-light);
-  background-color: var(--shiki-light-bg);
+  color: var(--shiki-dark) !important;
+  background-color: var(--shiki-dark-bg) !important;
 }
 
 .dark .shiki,
@@ -154,4 +154,16 @@ pre {
   overflow-x: auto;
   font-size: 0.875rem;
   line-height: 1.6;
+}
+
+/* ── Visualizer dropdown animation ───────────────────────────────── */
+@keyframes dropdown-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }

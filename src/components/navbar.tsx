@@ -52,6 +52,14 @@ export function Navbar() {
           </li>
           <li>
             <Link
+              href="/visualizer"
+              className="text-muted transition-colors hover:text-foreground"
+            >
+              Visualizer
+            </Link>
+          </li>
+          <li>
+            <Link
               href="/about"
               className="text-muted transition-colors hover:text-foreground"
             >
