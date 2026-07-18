@@ -8,6 +8,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { ScrollToTop } from "@/components/scroll-to-top";
 import { GlobalRunnerProvider } from "@/components/playground/global-runner-context";
 import { GlobalRunnerDrawer } from "@/components/playground/global-runner-drawer";
+import { Analytics } from "@/components/analytics";
 import {
   generateWebSiteJsonLd,
   generateOrganizationJsonLd,
@@ -26,7 +27,7 @@ const firaCode = Fira_Code({
   display: "swap",
 });
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://allaboutcs.com";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://allaboutcs.dev";
 
 export const metadata: Metadata = {
   title: {
@@ -129,6 +130,7 @@ export default function RootLayout({
           </SearchProvider>
           <ScrollToTop />
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );

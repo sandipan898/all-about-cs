@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { getAllTutorials } from "@/lib/mdx";
 import { getAllCategoryMetas } from "@/lib/categories";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://allaboutcs.com";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://allaboutcs.dev";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const tutorials = getAllTutorials();

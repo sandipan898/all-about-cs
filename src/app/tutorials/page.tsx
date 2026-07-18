@@ -7,12 +7,13 @@ import {
   generateItemListJsonLd,
 } from "@/lib/json-ld";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://allaboutcs.com";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://allaboutcs.dev";
 
 export const metadata = {
   title: "Tutorials",
   description:
     "Browse all dual-mode tutorials on algorithms, data structures, and core CS concepts.",
+  alternates: { canonical: "/tutorials" },
 };
 
 const CATEGORY_LABELS: Record<string, string> = {

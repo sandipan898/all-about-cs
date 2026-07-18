@@ -1,6 +1,6 @@
 import type { TutorialFrontmatter, TutorialMeta } from "./mdx";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://allaboutcs.com";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://allaboutcs.dev";
 const SITE_NAME = "All About CS";
 
 /**

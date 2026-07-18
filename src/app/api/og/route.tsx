@@ -103,7 +103,7 @@ export async function GET(request: NextRequest) {
             color: "#64748b",
           }}
         >
-          allaboutcs.com — Free CS Tutorials
+          allaboutcs.dev — Free CS Tutorials
         </div>
       </div>
     ),

@@ -19,6 +19,7 @@ export const metadata: Metadata = {
   title: "About",
   description:
     "All About CS is a developer learning platform by Sandipan Das — free tutorials on Python, Java, JavaScript, DSA, and more.",
+  alternates: { canonical: "/about" },
 };
 
 const technologies = [

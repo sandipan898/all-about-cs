@@ -5,12 +5,13 @@ import { getAllTutorials } from "@/lib/mdx";
 import { JsonLd } from "@/components/json-ld";
 import { generateBreadcrumbJsonLd } from "@/lib/json-ld";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://allaboutcs.com";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://allaboutcs.dev";
 
 export const metadata = {
   title: "Topics",
   description:
     "Explore learning tracks — pick a topic and follow a structured path from beginner to confident.",
+  alternates: { canonical: "/topics" },
 };
 
 export default function TopicsPage() {

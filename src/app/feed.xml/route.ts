@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getAllTutorials } from "@/lib/mdx";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://allaboutcs.com";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://allaboutcs.dev";
 const SITE_NAME = "All About CS";
 
 export async function GET() {
