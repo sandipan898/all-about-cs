@@ -71,7 +71,7 @@ export function GlobalRunnerDrawer() {
       />
 
       {/* Panel: bottom sheet on mobile, right side-panel on sm+ */}
-      <aside
+      <div
         role="dialog"
         aria-modal="true"
         aria-label="Code runner"
@@ -86,7 +86,7 @@ export function GlobalRunnerDrawer() {
           }`}
       >
         {hasOpened ? <DrawerBody /> : null}
-      </aside>
+      </div>
     </>
   );
 }
