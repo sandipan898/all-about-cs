@@ -7,6 +7,7 @@ import {
   useMemo,
   useState,
 } from "react";
+import { trackEvent } from "@/lib/analytics";
 
 /**
  * Payload a snippet dispatches when the reader clicks "Run".
@@ -62,6 +63,7 @@ export function GlobalRunnerProvider({
   });
 
   const open = useCallback((payload: RunnerPayload) => {
+    trackEvent("snippet_run_clicked", { language: payload.language });
     setState((prev) => ({
       isOpen: true,
       code: payload.code,

@@ -1,12 +1,13 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 import { Play, RotateCcw, Loader2, ChevronDown } from "lucide-react";
 import { LANGUAGE_LIST, getLanguage } from "@/lib/playground/languages";
 import { useCodeRunner } from "@/hooks/use-code-runner";
 import type { RunResult } from "@/lib/playground/types";
 import { OutputTerminal } from "@/components/playground/output-terminal";
+import { trackEvent } from "@/lib/analytics";
 
 const CodeMirrorEditor = dynamic(
   () =>
@@ -41,6 +42,11 @@ export function PlaygroundClient() {
 
   const { run, status, isRunning, error } = useCodeRunner(languageId);
   const booting = status === "loading";
+
+  // Fire once when the standalone IDE mounts — baseline "did they open it?".
+  useEffect(() => {
+    trackEvent("playground_opened");
+  }, []);
 
   const onSelectLanguage = (id: string) => {
     const next = getLanguage(id);

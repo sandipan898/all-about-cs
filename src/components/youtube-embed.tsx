@@ -1,6 +1,7 @@
 "use client";
 
 import { X, Maximize2, MonitorPlay } from "lucide-react";
+import Image from "next/image";
 import { useDualMode } from "./dual-mode-provider";
 
 interface YouTubeEmbedProps {
@@ -43,10 +44,12 @@ export function YouTubeEmbed({
           className="group flex w-full items-center gap-4 px-5 py-4 text-left transition-colors hover:bg-surface-hover"
         >
           <div className="relative aspect-video w-28 flex-shrink-0 overflow-hidden rounded-lg bg-border sm:w-36">
-            <img
+            <Image
               src={`https://img.youtube.com/vi/${id}/mqdefault.jpg`}
               alt={`Thumbnail for ${title}`}
-              className="h-full w-full object-cover"
+              fill
+              sizes="144px"
+              className="object-cover"
             />
             <div className="absolute inset-0 flex items-center justify-center bg-black/40">
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/90">

@@ -7,6 +7,7 @@ import {
   useCallback,
   type ReactNode,
 } from "react";
+import { trackEvent } from "@/lib/analytics";
 
 export type ViewMode = "read" | "watch";
 
@@ -22,7 +23,12 @@ export function DualModeProvider({ children }: { children: ReactNode }) {
   const [mode, setMode] = useState<ViewMode>("read");
 
   const toggle = useCallback(
-    () => setMode((prev) => (prev === "read" ? "watch" : "read")),
+    () =>
+      setMode((prev) => {
+        const next = prev === "read" ? "watch" : "read";
+        trackEvent("dual_mode_toggled", { mode: next });
+        return next;
+      }),
     []
   );
 

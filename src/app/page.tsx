@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import {
   ArrowRight,
   BookOpen,
@@ -214,10 +215,12 @@ export default function HomePage() {
                 >
                   {/* Thumbnail */}
                   <div className="relative aspect-video w-full overflow-hidden bg-border/30">
-                    <img
+                    <Image
                       src={`https://img.youtube.com/vi/${t.youtubeId}/mqdefault.jpg`}
                       alt={t.title}
-                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      className="object-cover transition-transform duration-300 group-hover:scale-105"
                     />
                     <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 transition-opacity group-hover:opacity-100">
                       <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/90 shadow-lg">

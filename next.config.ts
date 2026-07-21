@@ -2,6 +2,10 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
+    formats: ["image/avif", "image/webp"],
+    // Optimized YouTube thumbnails rarely change — cache them for 31 days
+    // instead of the short default, improving the cache-lifetime audit.
+    minimumCacheTTL: 2678400,
     remotePatterns: [
       {
         protocol: "https",
