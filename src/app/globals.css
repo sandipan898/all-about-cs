@@ -21,11 +21,11 @@
   --color-code-text: #d4d4d8;
 }
 
-/* Dark theme overrides - 8.6:1 contrast ratio */
+/* Dark theme overrides */
 .dark {
-  --color-primary: #818cf8;
+  --color-primary: #6366f1;
   --color-primary-foreground: #ffffff;
-  --color-accent: #a5b4fc;
+  --color-accent: #818cf8;
   --color-background: #0a0a0a;
   --color-foreground: #ededed;
   --color-muted: #a1a1aa;
@@ -44,11 +44,13 @@ html {
 html {
   transition: background-color 0.25s ease, color 0.25s ease;
 }
+
 body {
   transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   html,
   html * {
     transition-duration: 0ms;
@@ -165,6 +167,7 @@ pre {
     opacity: 0;
     transform: translateY(-4px) scale(0.98);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);

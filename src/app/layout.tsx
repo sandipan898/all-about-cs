@@ -8,15 +8,8 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { ScrollToTop } from "@/components/scroll-to-top";
 import { GlobalRunnerProvider } from "@/components/playground/global-runner-context";
 import { GlobalRunnerDrawer } from "@/components/playground/global-runner-drawer";
-<<<<<<< Updated upstream
 import { Analytics } from "@/components/analytics";
-=======
-<<<<<<< HEAD
-import { GoogleAnalytics } from '@next/third-parties/google'
-=======
-import { Analytics } from "@/components/analytics";
->>>>>>> c9cff7a2ebca5078f40209af337e1fcfed529cce
->>>>>>> Stashed changes
+import { GoogleAnalytics } from "@next/third-parties/google";
 import {
   generateWebSiteJsonLd,
   generateOrganizationJsonLd,

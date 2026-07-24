@@ -220,13 +220,7 @@ export default function HomePage() {
                       alt={t.title}
                       fill
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
                       loading="lazy"
-=======
->>>>>>> c9cff7a2ebca5078f40209af337e1fcfed529cce
->>>>>>> Stashed changes
                       className="object-cover transition-transform duration-300 group-hover:scale-105"
                     />
                     <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 transition-opacity group-hover:opacity-100">

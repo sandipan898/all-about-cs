@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import { X, Maximize2, MonitorPlay } from "lucide-react";
-import Image from "next/image";
 import { useDualMode } from "./dual-mode-provider";
 
 interface YouTubeEmbedProps {
@@ -50,13 +49,7 @@ export function YouTubeEmbed({
               alt={`Thumbnail for ${title}`}
               fill
               sizes="144px"
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
               loading="lazy"
-=======
->>>>>>> c9cff7a2ebca5078f40209af337e1fcfed529cce
->>>>>>> Stashed changes
               className="object-cover"
             />
             <div className="absolute inset-0 flex items-center justify-center bg-black/40">
