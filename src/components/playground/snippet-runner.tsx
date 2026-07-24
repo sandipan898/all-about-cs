@@ -3,6 +3,7 @@
 import { Play } from "lucide-react";
 import { getLanguage } from "@/lib/playground/languages";
 import { useGlobalRunner } from "./global-runner-context";
+import { yieldToMain } from "@/lib/utils";
 
 interface SnippetRunnerProps {
   /** Raw source (dispatched into the global runner on Run). */
@@ -42,7 +43,10 @@ export function SnippetRunner({
         </span>
         <button
           type="button"
-          onClick={() => open({ code, language, title })}
+          onClick={async () => {
+            await yieldToMain();
+            open({ code, language, title });
+          }}
           className="inline-flex items-center gap-1.5 rounded-md bg-accent px-3 py-1 text-xs font-semibold text-white transition-colors hover:bg-primary"
         >
           <Play className="h-3.5 w-3.5" />

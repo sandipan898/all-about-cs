@@ -64,15 +64,13 @@ function createShader(gl: WebGLRenderingContext, type: number, src: string) {
 export default function ParticleField() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const mouseRef = useRef({ x: -9999, y: -9999 });
+  const rectRef = useRef({ left: 0, top: 0 });
   const rafRef = useRef<number>(0);
   const particlesRef = useRef<Particle[]>([]);
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const rect = canvas.getBoundingClientRect();
-    mouseRef.current.x = e.clientX - rect.left;
-    mouseRef.current.y = e.clientY - rect.top;
+    mouseRef.current.x = e.clientX - rectRef.current.left;
+    mouseRef.current.y = e.clientY - rectRef.current.top;
   }, []);
 
   const handleMouseLeave = useCallback(() => {
@@ -81,12 +79,10 @@ export default function ParticleField() {
   }, []);
 
   const handleTouchMove = useCallback((e: TouchEvent) => {
-    const canvas = canvasRef.current;
-    if (!canvas || e.touches.length === 0) return;
-    const rect = canvas.getBoundingClientRect();
+    if (e.touches.length === 0) return;
     const t = e.touches[0];
-    mouseRef.current.x = t.clientX - rect.left;
-    mouseRef.current.y = t.clientY - rect.top;
+    mouseRef.current.x = t.clientX - rectRef.current.left;
+    mouseRef.current.y = t.clientY - rectRef.current.top;
   }, []);
 
   const handleTouchEnd = useCallback(() => {
@@ -107,6 +103,15 @@ export default function ParticleField() {
       powerPreference: "low-power",
     });
     if (!gl) return;
+
+    // Cache rect coordinates to prevent forced reflow on mousemove
+    function updateRectCache() {
+      if (!canvas) return;
+      const r = canvas.getBoundingClientRect();
+      rectRef.current.left = r.left;
+      rectRef.current.top = r.top;
+    }
+    updateRectCache();
 
     // Build program
     const vs = createShader(gl, gl.VERTEX_SHADER, VERT);
@@ -135,13 +140,11 @@ export default function ParticleField() {
     // Init particles
     let prevW = 0;
     function resize() {
+      updateRectCache();
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       const w = parent.clientWidth;
       const h = parent.clientHeight;
 
-      // Mobile browsers fire resize when the address bar hides/shows during
-      // scroll (height changes, width stays). Ignore these so particles don't
-      // reset/glitch. Only react when the width meaningfully changes.
       const widthChanged = Math.abs(w - prevW) > 1;
       const firstRun = prevW === 0;
       if (!firstRun && !widthChanged) return;
@@ -155,7 +158,6 @@ export default function ParticleField() {
 
       prevW = w;
 
-      // Respawn particles to fill viewport
       const particles: Particle[] = [];
       for (let i = 0; i < COUNT; i++) {
         const x = Math.random() * w;
@@ -176,21 +178,27 @@ export default function ParticleField() {
 
     resize();
 
-    // Resolve any CSS color string to normalized RGB [0..1]
-    function resolveColor(input: string, fallback: [number, number, number]) {
+    // Fast static color parser without DOM appending / forced reflow
+    function parseCssColor(input: string, fallback: [number, number, number]): [number, number, number] {
       if (!input) return fallback;
-      const temp = document.createElement("div");
-      temp.style.color = input;
-      document.body.appendChild(temp);
-      const computed = getComputedStyle(temp).color;
-      document.body.removeChild(temp);
-      const m = computed.match(/[\d.]+/g);
+      const val = input.trim();
+      if (val.startsWith("#")) {
+        const raw = val.slice(1);
+        if (raw.length === 6) {
+          return [
+            parseInt(raw.slice(0, 2), 16) / 255,
+            parseInt(raw.slice(2, 4), 16) / 255,
+            parseInt(raw.slice(4, 6), 16) / 255,
+          ];
+        }
+      }
+      const m = val.match(/[\d.]+/g);
       if (m && m.length >= 3) {
         return [
           parseFloat(m[0]) / 255,
           parseFloat(m[1]) / 255,
           parseFloat(m[2]) / 255,
-        ] as [number, number, number];
+        ];
       }
       return fallback;
     }
@@ -200,20 +208,16 @@ export default function ParticleField() {
       const isDark = document.documentElement.classList.contains("dark");
       const style = getComputedStyle(document.documentElement);
       const primary = style.getPropertyValue("--color-primary").trim();
-      // Neon cyan for dark, deep saturated violet for light
       const fallback: [number, number, number] = isDark
         ? [0.25, 0.9, 1.0]
-        : [0.42, 0.13, 0.85];
+        : [0.31, 0.27, 0.90]; // Deep indigo for light mode
       const [r, g, b] = isDark
-        ? resolveColor(primary, fallback)
+        ? parseCssColor(primary, fallback)
         : fallback;
       gl!.useProgram(prog);
       gl!.uniform3f(uColor, r, g, b);
-      // Brighten core toward white only in dark/additive mode
       gl!.uniform1f(uCoreBoost, isDark ? 0.6 : 0.0);
 
-      // Additive glow looks great on dark, but washes out on light.
-      // Use normal alpha blending in light mode so dark particles stay visible.
       gl!.enable(gl!.BLEND);
       if (isDark) {
         gl!.blendFunc(gl!.SRC_ALPHA, gl!.ONE);
@@ -224,14 +228,12 @@ export default function ParticleField() {
 
     applyThemeColor();
 
-    // React to theme (class) changes on <html>
     const themeObserver = new MutationObserver(applyThemeColor);
     themeObserver.observe(document.documentElement, {
       attributes: true,
       attributeFilter: ["class"],
     });
 
-    // Listen on parent so cursor detection covers the hero section
     parent.addEventListener("mousemove", handleMouseMove);
     parent.addEventListener("mouseleave", handleMouseLeave);
     parent.addEventListener("touchstart", handleTouchMove, { passive: true });
@@ -239,8 +241,15 @@ export default function ParticleField() {
     parent.addEventListener("touchend", handleTouchEnd);
     parent.addEventListener("touchcancel", handleTouchEnd);
     window.addEventListener("resize", resize);
+    window.addEventListener("scroll", updateRectCache, { passive: true });
 
+    let isVisible = true;
     function frame() {
+      if (!isVisible) {
+        rafRef.current = 0;
+        return;
+      }
+
       const particles = particlesRef.current;
       const mx = mouseRef.current.x;
       const my = mouseRef.current.y;
@@ -250,7 +259,6 @@ export default function ParticleField() {
       for (let i = 0; i < COUNT; i++) {
         const p = particles[i];
 
-        // Slow ambient drift of the origin (wraps around edges)
         p.ox += p.dx;
         p.oy += p.dy;
         if (p.ox < -20) { p.ox += w + 40; p.x += w + 40; }
@@ -258,7 +266,6 @@ export default function ParticleField() {
         if (p.oy < -20) { p.oy += h + 40; p.y += h + 40; }
         else if (p.oy > h + 20) { p.oy -= h + 40; p.y -= h + 40; }
 
-        // Mouse repulsion
         const dx = p.x - mx;
         const dy = p.y - my;
         const dist = Math.sqrt(dx * dx + dy * dy);
@@ -268,11 +275,9 @@ export default function ParticleField() {
           p.vy += (dy / dist) * force * MOUSE_RADIUS;
         }
 
-        // Return to (the moving) origin
         p.vx += (p.ox - p.x) * RETURN_SPEED;
         p.vy += (p.oy - p.y) * RETURN_SPEED;
 
-        // Damping
         p.vx *= 0.92;
         p.vy *= 0.92;
 
@@ -307,10 +312,27 @@ export default function ParticleField() {
       rafRef.current = requestAnimationFrame(frame);
     }
 
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        const nextVisible = entry.isIntersecting;
+        if (nextVisible && !isVisible) {
+          isVisible = true;
+          if (!rafRef.current) {
+            rafRef.current = requestAnimationFrame(frame);
+          }
+        } else if (!nextVisible && isVisible) {
+          isVisible = false;
+        }
+      },
+      { threshold: 0.05 }
+    );
+    observer.observe(canvas);
+
     rafRef.current = requestAnimationFrame(frame);
 
     return () => {
-      cancelAnimationFrame(rafRef.current);
+      observer.disconnect();
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
       themeObserver.disconnect();
       parent.removeEventListener("mousemove", handleMouseMove);
       parent.removeEventListener("mouseleave", handleMouseLeave);
@@ -319,6 +341,7 @@ export default function ParticleField() {
       parent.removeEventListener("touchend", handleTouchEnd);
       parent.removeEventListener("touchcancel", handleTouchEnd);
       window.removeEventListener("resize", resize);
+      window.removeEventListener("scroll", updateRectCache);
       gl.deleteProgram(prog);
       gl.deleteShader(vs);
       gl.deleteShader(fs);

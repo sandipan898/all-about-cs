@@ -18,6 +18,7 @@ export function generateTechArticleJsonLd(
     description: frontmatter.description,
     datePublished: frontmatter.date,
     dateModified: frontmatter.date,
+    inLanguage: "en-US",
     author: {
       "@type": "Person",
       name: frontmatter.author ?? SITE_NAME,
@@ -37,6 +38,58 @@ export function generateTechArticleJsonLd(
       keywords: frontmatter.tags.join(", "),
     }),
     proficiencyLevel: "Beginner",
+    educationalLevel: "Beginner",
+    dependencies: "Python 3 / Core CS Concepts",
+  };
+}
+
+/**
+ * Generates a JSON-LD `LearningResource` schema for a tutorial.
+ * Helps Google surface tutorials in specialized learning panels.
+ * @see https://schema.org/LearningResource
+ */
+export function generateLearningResourceJsonLd(
+  frontmatter: TutorialFrontmatter,
+  slug: string
+) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "LearningResource",
+    name: frontmatter.title,
+    description: frontmatter.description,
+    learningResourceType: "Tutorial",
+    educationalLevel: "Beginner",
+    isAccessibleForFree: true,
+    url: `${SITE_URL}/tutorials/${slug}`,
+    provider: {
+      "@type": "Organization",
+      name: SITE_NAME,
+      url: SITE_URL,
+    },
+    ...(frontmatter.tags && {
+      keywords: frontmatter.tags.join(", "),
+    }),
+  };
+}
+
+/**
+ * Generates a JSON-LD `SoftwareSourceCode` schema for code snippets.
+ * @see https://schema.org/SoftwareSourceCode
+ */
+export function generateSoftwareSourceCodeJsonLd(
+  title: string,
+  language: string,
+  code: string,
+  slug: string
+) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "SoftwareSourceCode",
+    name: title,
+    programmingLanguage: language,
+    codeSampleType: "code snippet",
+    text: code,
+    url: `${SITE_URL}/tutorials/${slug}`,
   };
 }
 

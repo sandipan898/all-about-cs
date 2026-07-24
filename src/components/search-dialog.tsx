@@ -25,13 +25,131 @@ interface SearchEntry {
   category: "tutorial";
 }
 
+const SYNONYMS: Record<string, string[]> = {
+  oop: ["object oriented programming", "object oriented", "object-oriented", "oops"],
+  oops: ["object oriented programming", "object oriented", "object-oriented", "oop"],
+  dsa: ["data structures and algorithms", "data structures", "algorithms"],
+  js: ["javascript", "ecmascript"],
+  ts: ["typescript"],
+  py: ["python"],
+  cpp: ["c++", "cpp"],
+  algo: ["algorithm", "algorithms"],
+  "big o": ["big-o", "complexity", "time complexity", "asymptotic"],
+  bigo: ["big-o", "big o", "complexity", "time complexity"],
+  regex: ["regular expressions", "regexp"],
+};
+
+function normalize(str: string): string {
+  return (str || "")
+    .toLowerCase()
+    .replace(/[-_]/g, " ")
+    .replace(/[^\w\s]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function tokenize(normStr: string): string[] {
+  return normStr.split(/\s+/).filter(Boolean);
+}
+
 function escapeRegex(s: string): string {
   return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
+interface PreparedSearchEntry {
+  entry: SearchEntry;
+  normTitle: string;
+  normDesc: string;
+  normTags: string[];
+  normHeadings: string[];
+  normBody: string;
+}
+
+function scorePreparedEntry(
+  item: PreparedSearchEntry,
+  normQuery: string,
+  queryTokens: string[],
+  synonymPhrases: string[],
+  queryRegexMap: Map<string, RegExp>
+): number {
+  const { normTitle, normDesc, normTags, normHeadings, normBody } = item;
+
+  let score = 0;
+
+  function testWord(text: string, term: string): boolean {
+    if (!text || !term) return false;
+    if (term.includes(" ")) return text.includes(term);
+    let re = queryRegexMap.get(term);
+    if (!re) {
+      re = new RegExp(`\\b${escapeRegex(term)}\\b`, "i");
+      queryRegexMap.set(term, re);
+    }
+    return re.test(text);
+  }
+
+  // 1. TITLE MATCHING (Highest priority: 4,000 – 10,000 pts)
+  if (normTitle === normQuery) {
+    score += 10000;
+  } else if (normTitle.startsWith(normQuery)) {
+    score += 6000;
+  } else if (testWord(normTitle, normQuery)) {
+    score += 4000;
+  } else if (queryTokens.length > 0 && queryTokens.every((t) => testWord(normTitle, t))) {
+    score += 2500;
+  }
+
+  // 2. TAG MATCHING (2,000 – 5,000 pts)
+  for (const tag of normTags) {
+    if (tag === normQuery) {
+      score += 5000;
+    } else if (testWord(tag, normQuery)) {
+      score += 3000;
+    } else if (queryTokens.length > 0 && queryTokens.every((t) => testWord(tag, t))) {
+      score += 2000;
+    }
+  }
+
+  // 3. SYNONYM EXPANSION MATCHING (1,500 – 4,500 pts)
+  for (const syn of synonymPhrases) {
+    if (testWord(normTitle, syn)) score += 4500;
+    if (normTags.some((t) => t === syn || testWord(t, syn))) score += 3500;
+    if (testWord(normDesc, syn)) score += 1500;
+  }
+
+  // 4. DESCRIPTION MATCHING (800 – 1,200 pts)
+  if (testWord(normDesc, normQuery)) {
+    score += 1200;
+  } else if (queryTokens.length > 0 && queryTokens.every((t) => testWord(normDesc, t))) {
+    score += 800;
+  }
+
+  // 5. HEADINGS MATCHING (1,000 pts)
+  for (const h of normHeadings) {
+    if (testWord(h, normQuery)) {
+      score += 1000;
+      break;
+    }
+  }
+
+  // 6. BODY MATCHING (Low priority: 200 pts)
+  if (testWord(normBody, normQuery)) {
+    score += 200;
+  }
+
+  return score;
+}
+
 function highlightMatch(text: string, query: string): React.ReactNode {
   if (!query.trim()) return text;
-  const re = new RegExp(`(${escapeRegex(query)})`, "gi");
+  const normQ = normalize(query);
+  const terms = new Set<string>([query.trim()]);
+  if (normQ && SYNONYMS[normQ]) {
+    SYNONYMS[normQ].forEach((s) => terms.add(s));
+  }
+  const pattern = Array.from(terms)
+    .map(escapeRegex)
+    .join("|");
+  const re = new RegExp(`(${pattern})`, "gi");
   const parts = text.split(re);
   return parts.map((part, i) =>
     i % 2 === 1 ? (
@@ -59,22 +177,33 @@ function getSnippet(entry: SearchEntry, query: string): string {
   return snippet;
 }
 
-function searchEntries(index: SearchEntry[], query: string): SearchEntry[] {
-  const q = query.trim().toLowerCase();
-  if (!q) return [];
-  const results: SearchEntry[] = [];
-  for (const entry of index) {
-    const inTitle = entry.title.toLowerCase().includes(q);
-    const inDesc = entry.description.toLowerCase().includes(q);
-    const inTags = entry.tags.some((t) => t.toLowerCase().includes(q));
-    const inHeadings = entry.headings.some((h) => h.toLowerCase().includes(q));
-    const inBody = entry.body.toLowerCase().includes(q);
-    if (inTitle || inDesc || inTags || inHeadings || inBody) {
-      results.push(entry);
-      if (results.length >= RESULT_LIMIT) break;
+function searchEntries(index: PreparedSearchEntry[], query: string): SearchEntry[] {
+  const normQuery = normalize(query);
+  if (!normQuery) return [];
+
+  const queryTokens = tokenize(normQuery);
+  const synonymPhrases = SYNONYMS[normQuery]
+    ? SYNONYMS[normQuery].map(normalize)
+    : [];
+  const queryRegexMap = new Map<string, RegExp>();
+
+  const results: { entry: SearchEntry; score: number }[] = [];
+  for (let i = 0; i < index.length; i++) {
+    const item = index[i];
+    const score = scorePreparedEntry(
+      item,
+      normQuery,
+      queryTokens,
+      synonymPhrases,
+      queryRegexMap
+    );
+    if (score > 0) {
+      results.push({ entry: item.entry, score });
     }
   }
-  return results;
+
+  results.sort((a, b) => b.score - a.score);
+  return results.slice(0, RESULT_LIMIT).map((r) => r.entry);
 }
 
 function SearchDialogPortal({ children }: { children: React.ReactNode }) {
@@ -92,7 +221,7 @@ interface SearchDialogProps {
 export function SearchDialog({ open, onClose }: SearchDialogProps) {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
-  const [index, setIndex] = useState<SearchEntry[] | null>(null);
+  const [index, setIndex] = useState<PreparedSearchEntry[] | null>(null);
   const [query, setQuery] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -119,7 +248,17 @@ export function SearchDialog({ open, onClose }: SearchDialogProps) {
     if (index === null) {
       fetch("/search-index.json")
         .then((r) => r.json())
-        .then(setIndex)
+        .then((data: SearchEntry[]) => {
+          const prepared = data.map((entry) => ({
+            entry,
+            normTitle: normalize(entry.title),
+            normDesc: normalize(entry.description),
+            normTags: (entry.tags || []).map(normalize),
+            normHeadings: (entry.headings || []).map(normalize),
+            normBody: normalize(entry.body),
+          }));
+          setIndex(prepared);
+        })
         .catch(() => setIndex([]));
     }
   }, [open, index]);

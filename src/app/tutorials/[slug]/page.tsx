@@ -5,6 +5,7 @@ import remarkGfm from "remark-gfm";
 import { getTutorialBySlug, getTutorialSlugs } from "@/lib/mdx";
 import {
   generateTechArticleJsonLd,
+  generateLearningResourceJsonLd,
   generateVideoObjectJsonLd,
   generateBreadcrumbJsonLd,
 } from "@/lib/json-ld";
@@ -106,6 +107,7 @@ export default async function TutorialPage({ params }: TutorialPageProps) {
   const { frontmatter, content } = tutorial;
 
   const techArticleJsonLd = generateTechArticleJsonLd(frontmatter, slug);
+  const learningResourceJsonLd = generateLearningResourceJsonLd(frontmatter, slug);
   const videoObjectJsonLd = generateVideoObjectJsonLd(frontmatter, slug);
   const breadcrumbJsonLd = generateBreadcrumbJsonLd([
     { name: "Home", url: SITE_URL },
@@ -115,8 +117,9 @@ export default async function TutorialPage({ params }: TutorialPageProps) {
 
   return (
     <>
-      {/* Structured data for search engines and LLMs */}
+      {/* Structured data for search engines, rich Google panels, and LLMs */}
       <JsonLd data={techArticleJsonLd} />
+      <JsonLd data={learningResourceJsonLd} />
       <JsonLd data={videoObjectJsonLd} />
       <JsonLd data={breadcrumbJsonLd} />
 
@@ -138,7 +141,9 @@ export default async function TutorialPage({ params }: TutorialPageProps) {
           <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
             {frontmatter.title}
           </h1>
-          <p className="mt-3 text-lg text-muted">{frontmatter.description}</p>
+          <p className="mt-3 text-lg leading-relaxed text-muted font-normal" data-geo-summary="bluf">
+            {frontmatter.description}
+          </p>
           {frontmatter.tags && frontmatter.tags.length > 0 && (
             <div className="mt-4 flex flex-wrap gap-2">
               {frontmatter.tags.map((tag) => (

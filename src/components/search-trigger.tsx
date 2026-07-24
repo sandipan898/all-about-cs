@@ -50,7 +50,7 @@ export function SearchTrigger() {
     <button
       type="button"
       onClick={openSearch}
-      aria-label="Open search"
+      aria-label="Search tutorials (Ctrl+K)"
       className="inline-flex items-center gap-2 rounded-lg border border-border bg-surface/50 px-3 py-1.5 text-sm text-muted transition-colors hover:border-foreground/20 hover:text-foreground"
     >
       <Search className="h-4 w-4 shrink-0" />

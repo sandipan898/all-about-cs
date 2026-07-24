@@ -9,6 +9,7 @@ import {
   type PyodideInstance,
 } from "@/lib/playground/client-runtimes";
 import type { RunResult, RunnerStatus } from "@/lib/playground/types";
+import { yieldToMain } from "@/lib/utils";
 
 interface UseCodeRunnerReturn {
   /** Current runtime lifecycle state. */
@@ -79,6 +80,7 @@ export function useCodeRunner(languageId: string): UseCodeRunnerReturn {
   const run = useCallback(
     async (code: string, stdin?: string): Promise<RunResult> => {
       setStatus("running");
+      await yieldToMain();
       try {
         if (target === "client-python") {
           return await runPython(code, pyodideRef.current ?? undefined, stdin);
