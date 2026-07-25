@@ -37,6 +37,12 @@ const SYNONYMS: Record<string, string[]> = {
   "big o": ["big-o", "complexity", "time complexity", "asymptotic"],
   bigo: ["big-o", "big o", "complexity", "time complexity"],
   regex: ["regular expressions", "regexp"],
+  lambda: ["anonymous function", "anonymous functions", "map filter reduce", "higher order functions", "lambda expressions"],
+  lambdas: ["lambda", "anonymous functions", "lambda expressions"],
+  decorator: ["decorators", "wrapper function", "wrapper functions", "wrapper", "syntactic sugar", "timer decorator"],
+  decorators: ["decorator", "wrapper function", "wrapper functions", "wrapper", "syntactic sugar"],
+  wrapper: ["decorator", "decorators", "wrapper function", "wrapper functions"],
+  hof: ["higher order function", "higher order functions", "lambda", "decorators"],
 };
 
 function normalize(str: string): string {
