@@ -43,6 +43,15 @@ const SYNONYMS: Record<string, string[]> = {
   decorators: ["decorator", "wrapper function", "wrapper functions", "wrapper", "syntactic sugar"],
   wrapper: ["decorator", "decorators", "wrapper function", "wrapper functions"],
   hof: ["higher order function", "higher order functions", "lambda", "decorators"],
+  debug: ["debugging", "breakpoint", "traceback", "pdb", "logging"],
+  debugging: ["debug", "breakpoint", "traceback", "pdb", "logging", "error handling"],
+  pdb: ["debugging", "breakpoint", "traceback"],
+  database: ["sqlite", "sqlite3", "sql", "db-api", "databases", "persistence"],
+  databases: ["database", "sqlite", "sqlite3", "sql", "db-api"],
+  sqlite: ["sqlite3", "database", "sql", "db-api"],
+  api: ["apis", "web apis", "rest api", "requests", "json", "http"],
+  apis: ["api", "web apis", "rest api", "requests", "json"],
+  requests: ["api", "web apis", "rest api", "http requests", "json"],
 };
 
 function normalize(str: string): string {
@@ -82,63 +91,93 @@ function scorePreparedEntry(
 
   let score = 0;
 
-  function testWord(text: string, term: string): boolean {
+  function testPrefix(text: string, term: string): boolean {
     if (!text || !term) return false;
     if (term.includes(" ")) return text.includes(term);
-    let re = queryRegexMap.get(term);
+    const key = "prefix_" + term;
+    let re = queryRegexMap.get(key);
     if (!re) {
-      re = new RegExp(`\\b${escapeRegex(term)}\\b`, "i");
-      queryRegexMap.set(term, re);
+      re = new RegExp(`\\b${escapeRegex(term)}`, "i");
+      queryRegexMap.set(key, re);
     }
     return re.test(text);
   }
 
-  // 1. TITLE MATCHING (Highest priority: 4,000 – 10,000 pts)
+  function testExactWord(text: string, term: string): boolean {
+    if (!text || !term) return false;
+    if (term.includes(" ")) return text.includes(term);
+    const key = "exact_" + term;
+    let re = queryRegexMap.get(key);
+    if (!re) {
+      re = new RegExp(`\\b${escapeRegex(term)}\\b`, "i");
+      queryRegexMap.set(key, re);
+    }
+    return re.test(text);
+  }
+
+  // 1. TITLE MATCHING (Highest priority: 3,000 – 10,000 pts)
   if (normTitle === normQuery) {
     score += 10000;
   } else if (normTitle.startsWith(normQuery)) {
-    score += 6000;
-  } else if (testWord(normTitle, normQuery)) {
+    score += 7000;
+  } else if (testExactWord(normTitle, normQuery)) {
+    score += 5000;
+  } else if (testPrefix(normTitle, normQuery)) {
     score += 4000;
-  } else if (queryTokens.length > 0 && queryTokens.every((t) => testWord(normTitle, t))) {
+  } else if (normTitle.includes(normQuery)) {
+    score += 3000;
+  } else if (
+    queryTokens.length > 0 &&
+    queryTokens.every((t) => testPrefix(normTitle, t) || normTitle.includes(t))
+  ) {
     score += 2500;
   }
 
-  // 2. TAG MATCHING (2,000 – 5,000 pts)
+  // 2. TAG MATCHING (1,500 – 5,000 pts)
   for (const tag of normTags) {
     if (tag === normQuery) {
       score += 5000;
-    } else if (testWord(tag, normQuery)) {
-      score += 3000;
-    } else if (queryTokens.length > 0 && queryTokens.every((t) => testWord(tag, t))) {
+    } else if (tag.startsWith(normQuery) || testPrefix(tag, normQuery)) {
+      score += 3500;
+    } else if (tag.includes(normQuery)) {
       score += 2000;
+    } else if (
+      queryTokens.length > 0 &&
+      queryTokens.every((t) => tag.includes(t) || testPrefix(tag, t))
+    ) {
+      score += 1500;
     }
   }
 
-  // 3. SYNONYM EXPANSION MATCHING (1,500 – 4,500 pts)
+  // 3. SYNONYM EXPANSION MATCHING (1,500 – 4,000 pts)
   for (const syn of synonymPhrases) {
-    if (testWord(normTitle, syn)) score += 4500;
-    if (normTags.some((t) => t === syn || testWord(t, syn))) score += 3500;
-    if (testWord(normDesc, syn)) score += 1500;
+    if (testPrefix(normTitle, syn) || normTitle.includes(syn)) score += 4000;
+    if (normTags.some((t) => t.includes(syn) || testPrefix(t, syn))) score += 3000;
+    if (testPrefix(normDesc, syn) || normDesc.includes(syn)) score += 1500;
   }
 
-  // 4. DESCRIPTION MATCHING (800 – 1,200 pts)
-  if (testWord(normDesc, normQuery)) {
+  // 4. DESCRIPTION MATCHING (800 – 1,500 pts)
+  if (testExactWord(normDesc, normQuery)) {
+    score += 1500;
+  } else if (testPrefix(normDesc, normQuery) || normDesc.includes(normQuery)) {
     score += 1200;
-  } else if (queryTokens.length > 0 && queryTokens.every((t) => testWord(normDesc, t))) {
+  } else if (
+    queryTokens.length > 0 &&
+    queryTokens.every((t) => testPrefix(normDesc, t) || normDesc.includes(t))
+  ) {
     score += 800;
   }
 
   // 5. HEADINGS MATCHING (1,000 pts)
   for (const h of normHeadings) {
-    if (testWord(h, normQuery)) {
+    if (testPrefix(h, normQuery) || h.includes(normQuery)) {
       score += 1000;
       break;
     }
   }
 
   // 6. BODY MATCHING (Low priority: 200 pts)
-  if (testWord(normBody, normQuery)) {
+  if (testPrefix(normBody, normQuery) || normBody.includes(normQuery)) {
     score += 200;
   }
 
