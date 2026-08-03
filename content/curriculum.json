@@ -1,0 +1,307 @@
+{
+  "_meta": {
+    "maintainedBy": "AI-assisted — run `npm run auto -- curriculum --audit` to reconcile with files, `--prompt` to generate a research brief for any chatbot, `--apply <file>` to merge an AI-produced curriculum.",
+    "slugRules": "kebab-case [a-z0-9-]; include the topic keyword (URLs are flat /tutorials/<slug>, so the 'python-' prefix carries the keyword); <= ~6 words; match search intent. NEVER rename an existing published slug without adding a 301 redirect.",
+    "strategy": "Depth-first topical authority: complete the anchor pillar (python) before expanding spokes.",
+    "proposedRenames": [
+      {
+        "from": "python_packages_and_pip",
+        "to": "python-packages-and-pip",
+        "reason": "Underscores are word-joiners for Google; hyphens are word-separators. Done + 308 redirect in middleware.ts."
+      },
+      {
+        "from": "guide-to-lambda-expressons",
+        "to": "python-lambda-expressions",
+        "reason": "Fix typo (expressons) and add the 'python' keyword to the flat URL. Done + 308 redirect."
+      },
+      {
+        "from": "working-with-database",
+        "to": "python-working-with-databases",
+        "reason": "Add 'python' keyword to the flat URL; pluralise for search intent. Done + 308 redirect."
+      },
+      {
+        "from": "working-with-web-apis",
+        "to": "python-working-with-web-apis",
+        "reason": "Add 'python' keyword to the flat URL. Done + 308 redirect."
+      }
+    ],
+    "notes": [
+      "Content-cannibalization risk: `python-file-handling` (standalone complete guide) overlaps the `python-file-handling-p1/-p2` series. Consider consolidating or setting one canonical."
+    ]
+  },
+  "anchor": "python",
+  "pillars": {
+    "python": {
+      "label": "Python",
+      "priority": "anchor",
+      "planned": [
+        {
+          "slug": "python-setup-environment",
+          "title": "Setting Up Your Python Environment"
+        },
+        {
+          "slug": "python-variables-and-data-types",
+          "title": "Variables and Data Types"
+        },
+        {
+          "slug": "python-numbers-and-arithmetic",
+          "title": "Numbers and Arithmetic"
+        },
+        {
+          "slug": "python-strings-and-methods",
+          "title": "Strings and Methods"
+        },
+        {
+          "slug": "python-f-strings-and-formatting",
+          "title": "f-Strings and String Formatting"
+        },
+        {
+          "slug": "python-operators",
+          "title": "Operators"
+        },
+        {
+          "slug": "python-user-input",
+          "title": "Getting User Input"
+        },
+        {
+          "slug": "python-conditionals",
+          "title": "Conditionals (if / elif / else)"
+        },
+        {
+          "slug": "python-loops",
+          "title": "Loops (for / while)"
+        },
+        {
+          "slug": "python-pattern-matching",
+          "title": "Structural Pattern Matching (match / case)"
+        },
+        {
+          "slug": "python-lists-introduction",
+          "title": "Lists: Introduction"
+        },
+        {
+          "slug": "python-lists-methods",
+          "title": "List Methods"
+        },
+        {
+          "slug": "python-lists-builtin-functions",
+          "title": "Built-in Functions for Lists"
+        },
+        {
+          "slug": "python-list-comprehension-and-slicing",
+          "title": "List Comprehension and Slicing"
+        },
+        {
+          "slug": "python-tuples-complete-guide",
+          "title": "Tuples: The Complete Guide"
+        },
+        {
+          "slug": "python-sets-complete-guide",
+          "title": "Sets: The Complete Guide"
+        },
+        {
+          "slug": "python-dictionaries-basics",
+          "title": "Dictionaries: Basics"
+        },
+        {
+          "slug": "python-dictionaries-methods",
+          "title": "Dictionary Methods"
+        },
+        {
+          "slug": "python-dictionaries-operations",
+          "title": "Dictionary Operations"
+        },
+        {
+          "slug": "python-functions",
+          "title": "Functions"
+        },
+        {
+          "slug": "python-args-and-kwargs",
+          "title": "*args and **kwargs Explained"
+        },
+        {
+          "slug": "python-higher-order-functions",
+          "title": "Higher-Order Functions"
+        },
+        {
+          "slug": "python-lambda-expressions",
+          "title": "A Guide to Lambda Expressions"
+        },
+        {
+          "slug": "mastering-python-decorators",
+          "title": "Mastering Python Decorators"
+        },
+        {
+          "slug": "python-generators-and-iterators",
+          "title": "Generators and Iterators"
+        },
+        {
+          "slug": "python-modules-and-libraries",
+          "title": "Modules and Libraries"
+        },
+        {
+          "slug": "python-packages-and-pip",
+          "title": "Packages and pip"
+        },
+        {
+          "slug": "python-virtual-environments",
+          "title": "Virtual Environments and Dependency Management"
+        },
+        {
+          "slug": "python-error-handling",
+          "title": "Error Handling (try / except)"
+        },
+        {
+          "slug": "debugging-your-code",
+          "title": "Debugging Your Code"
+        },
+        {
+          "slug": "python-logging",
+          "title": "Logging Done Right"
+        },
+        {
+          "slug": "python-oop-classes-and-objects",
+          "title": "OOP: Classes and Objects"
+        },
+        {
+          "slug": "python-oop-encapsulation-and-inheritance",
+          "title": "OOP: Encapsulation and Inheritance"
+        },
+        {
+          "slug": "python-oop-polymorphism-and-abstraction",
+          "title": "OOP: Polymorphism and Abstraction"
+        },
+        {
+          "slug": "python-dataclasses",
+          "title": "Data Classes (@dataclass)"
+        },
+        {
+          "slug": "python-file-handling",
+          "title": "The Complete Guide to File Handling"
+        },
+        {
+          "slug": "python-file-handling-p1",
+          "title": "File Handling — Part 1: Create, Write, Read"
+        },
+        {
+          "slug": "python-file-handling-p2",
+          "title": "File Handling — Part 2: Advanced Operations"
+        },
+        {
+          "slug": "python-json-handling",
+          "title": "Working with JSON"
+        },
+        {
+          "slug": "python-datetime-and-time",
+          "title": "Dates and Times (datetime)"
+        },
+        {
+          "slug": "python-regular-expressions-p1",
+          "title": "Regular Expressions — Part 1"
+        },
+        {
+          "slug": "python-regular-expressions-p2",
+          "title": "Regular Expressions — Part 2"
+        },
+        {
+          "slug": "python-context-managers",
+          "title": "Context Managers (with statement)"
+        },
+        {
+          "slug": "python-typing-and-annotations",
+          "title": "Type Hints and Annotations"
+        },
+        {
+          "slug": "python-async-basics",
+          "title": "Async / Await Basics"
+        },
+        {
+          "slug": "python-testing-with-pytest",
+          "title": "Testing with pytest"
+        },
+        {
+          "slug": "python-working-with-databases",
+          "title": "Working with Databases (sqlite3)"
+        },
+        {
+          "slug": "python-working-with-web-apis",
+          "title": "Working with Web APIs (requests)"
+        },
+        {
+          "slug": "python-web-scraping-with-beautifulsoup",
+          "title": "Web Scraping with BeautifulSoup"
+        }
+      ]
+    },
+    "dsa": {
+      "label": "Data Structures & Algorithms",
+      "priority": "spoke",
+      "planned": [
+        {
+          "slug": "understanding-big-o-notation",
+          "title": "Understanding Big-O Notation"
+        },
+        {
+          "slug": "intro-to-recursion",
+          "title": "Intro to Recursion"
+        },
+        {
+          "slug": "arrays-and-dynamic-arrays",
+          "title": "Arrays and Dynamic Arrays"
+        },
+        {
+          "slug": "linked-lists",
+          "title": "Linked Lists"
+        },
+        {
+          "slug": "stacks-and-queues",
+          "title": "Stacks and Queues"
+        },
+        {
+          "slug": "hash-tables",
+          "title": "Hash Tables"
+        },
+        {
+          "slug": "two-pointers-technique",
+          "title": "The Two-Pointers Technique"
+        },
+        {
+          "slug": "sliding-window-technique",
+          "title": "The Sliding-Window Technique"
+        },
+        {
+          "slug": "binary-search",
+          "title": "Binary Search"
+        },
+        {
+          "slug": "sorting-algorithms",
+          "title": "Sorting Algorithms"
+        },
+        {
+          "slug": "heaps-and-priority-queues",
+          "title": "Heaps and Priority Queues"
+        },
+        {
+          "slug": "trees-and-binary-search-trees",
+          "title": "Trees and Binary Search Trees"
+        },
+        {
+          "slug": "graphs-and-traversal",
+          "title": "Graphs and Traversal (BFS / DFS)"
+        },
+        {
+          "slug": "dynamic-programming-intro",
+          "title": "Introduction to Dynamic Programming"
+        },
+        {
+          "slug": "backtracking-intro",
+          "title": "Introduction to Backtracking"
+        },
+        {
+          "slug": "greedy-algorithms",
+          "title": "Greedy Algorithms"
+        }
+      ]
+    }
+  }
+}

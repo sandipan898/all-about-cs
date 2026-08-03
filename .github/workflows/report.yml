@@ -1,0 +1,71 @@
+name: Weekly report
+
+# Generates the weekly digest (rolling GitHub issue) and social promo drafts.
+# Dispatch-first + gated by AUTOMATION_ENABLED / REPORTS_ENABLED.
+on:
+  schedule:
+    - cron: "0 6 * * 1" # Mondays 06:00 UTC
+  workflow_dispatch:
+  repository_dispatch:
+    types: [report]
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: weekly-report
+  cancel-in-progress: false
+
+jobs:
+  report:
+    name: Digest + social drafts
+    if: >-
+      vars.AUTOMATION_ENABLED != 'false' &&
+      vars.REPORTS_ENABLED != 'false'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+
+      - name: Usage guard (report only)
+        run: npm run auto -- usage --alert
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Fetch SEO signals (GSC + CWV) — enriches digest and curriculum brief
+        run: npm run auto -- seo-signals
+        continue-on-error: true   # non-fatal: missing keys = sections omitted from digest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GSC_SERVICE_ACCOUNT_JSON: ${{ secrets.GSC_SERVICE_ACCOUNT_JSON }}
+          GSC_SITE_URL: ${{ vars.GSC_SITE_URL }}
+          PAGESPEED_API_KEY: ${{ secrets.PAGESPEED_API_KEY }}
+          NEXT_PUBLIC_SITE_URL: https://allaboutcs.dev
+
+      - name: Build weekly digest issue
+        run: npm run auto -- report
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NEXT_PUBLIC_SITE_URL: https://allaboutcs.dev
+          UMAMI_API_URL: ${{ secrets.UMAMI_API_URL }}
+          UMAMI_API_TOKEN: ${{ secrets.UMAMI_API_TOKEN }}
+          NEXT_PUBLIC_UMAMI_WEBSITE_ID: ${{ secrets.NEXT_PUBLIC_UMAMI_WEBSITE_ID }}
+
+      - name: Generate social drafts (latest tutorial)
+        run: npm run auto -- social
+        env:
+          NEXT_PUBLIC_SITE_URL: https://allaboutcs.dev
+
+      - name: Upload social drafts artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: social-drafts
+          path: automation-output/
+          if-no-files-found: ignore
+          retention-days: 14

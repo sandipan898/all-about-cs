@@ -7,7 +7,11 @@
     "build": "next build",
     "prebuild": "tsx scripts/build-search-index.ts",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx scripts/test.ts",
+    "validate": "tsx scripts/validate-content.ts",
+    "auto": "tsx scripts/auto.ts"
   },
   "description": "All About CS — A developer learning platform with dual-mode tutorials",
   "dependencies": {

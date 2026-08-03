@@ -1,0 +1,100 @@
+name: Quality (Lighthouse + links)
+
+# Unattended site-health checks. Dispatch-first so an external scheduler
+# (cron-jobs.org) can trigger it via repository_dispatch, while GitHub cron is
+# the built-in fallback. Master switch: repo variable AUTOMATION_ENABLED.
+on:
+  schedule:
+    - cron: "30 5 * * *" # 05:30 UTC daily
+  workflow_dispatch:
+  repository_dispatch:
+    types: [quality]
+
+permissions:
+  contents: read
+  issues: write   # CWV alert issues
+
+concurrency:
+  group: quality
+  cancel-in-progress: true
+
+jobs:
+  guard:
+    name: Usage guard
+    # Skip entirely when automation or this job is switched off.
+    if: >-
+      vars.AUTOMATION_ENABLED != 'false' &&
+      vars.LIGHTHOUSE_ENABLED != 'false'
+    runs-on: ubuntu-latest
+    outputs:
+      over_limit: ${{ steps.usage.outputs.over_limit }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - id: usage
+        name: Check Actions minutes budget
+        run: npm run auto -- usage --enforce
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          USAGE_WARN_THRESHOLD: ${{ vars.USAGE_WARN_THRESHOLD }}
+          USAGE_ALERT_THRESHOLD: ${{ vars.USAGE_ALERT_THRESHOLD }}
+
+  lighthouse:
+    name: Lighthouse + link check
+    needs: guard
+    if: needs.guard.outputs.over_limit != 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Lighthouse (mobile)
+        uses: treosh/lighthouse-ci-action@v12
+        with:
+          urls: |
+            https://allaboutcs.dev/
+            https://allaboutcs.dev/tutorials
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+
+      - name: SEO endpoints return 200
+        run: |
+          set -e
+          for path in sitemap.xml robots.txt llms.txt feed.xml; do
+            code=$(curl -s -o /dev/null -w "%{http_code}" "https://allaboutcs.dev/$path")
+            echo "$path -> $code"
+            if [ "$code" != "200" ]; then echo "::error::/$path returned $code"; exit 1; fi
+          done
+
+  cwv:
+    name: Core Web Vitals (PSI)
+    needs: guard
+    if: needs.guard.outputs.over_limit != 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10   # PSI can be slow; two URLs ~60s each
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+
+      - name: Fetch CWV + open alert issue if thresholds breached
+        run: npm run auto -- seo-signals --cwv-only
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PAGESPEED_API_KEY: ${{ secrets.PAGESPEED_API_KEY }}
+          NEXT_PUBLIC_SITE_URL: https://allaboutcs.dev
+
+      - name: Upload seo-signals artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: seo-signals-cwv
+          path: automation-output/seo-signals.json
+          if-no-files-found: ignore
+          retention-days: 7
