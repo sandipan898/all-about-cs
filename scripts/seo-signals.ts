@@ -110,10 +110,18 @@ export async function runSeoSignals(argv: string[] = []): Promise<number> {
   // GSC (skip in cwv-only mode or when not configured)
   let gsc: GscData | null = null;
   if (!cwvOnly) {
+    const gscConfigured = !!(process.env.GSC_SERVICE_ACCOUNT_JSON && process.env.GSC_SITE_URL);
     log.info("Fetching GSC data…");
     gsc = await fetchGscData();
     if (gsc)
       log.success(`GSC: ${gsc.topQueries.length} queries · ${gsc.contentGaps.length} gaps · ${gsc.lowCtrOpportunities.length} low-CTR`);
+    else if (gscConfigured)
+      log.warn(
+        "GSC: credentials present but fetch returned null — likely a 403 permission error.\n" +
+        "  Fix: go to Google Search Console → Settings → Users and permissions → Add user,\n" +
+        "  enter the client_email from your GSC_SERVICE_ACCOUNT_JSON, set permission to\n" +
+        "  'Restricted' (read-only), and save. Then re-run this step."
+      );
     else
       log.notice("GSC: not configured (set GSC_SERVICE_ACCOUNT_JSON + GSC_SITE_URL).");
   }
