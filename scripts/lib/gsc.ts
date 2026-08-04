@@ -122,6 +122,23 @@ async function queryDimension(
 
 // ── Public API ──────────────────────────────────────────────────────
 
+/**
+ * Generate a signed RS256 JWT from GSC_SERVICE_ACCOUNT_JSON.
+ * Used by the `gsc-jwt` CLI task so the result can be pasted into
+ * Postman → collection variable `gsc_jwt` when the sandbox lacks RSA support.
+ */
+export function generateJwtForCli(): string {
+  const raw = process.env.GSC_SERVICE_ACCOUNT_JSON;
+  if (!raw) throw new Error("GSC_SERVICE_ACCOUNT_JSON is not set.");
+  const decoded = raw.trim().startsWith("{")
+    ? raw
+    : Buffer.from(raw, "base64").toString("utf-8");
+  const sa = JSON.parse(decoded) as { client_email: string; private_key: string };
+  if (!sa.client_email || !sa.private_key)
+    throw new Error("Service account JSON is missing client_email or private_key.");
+  return makeJwt(sa);
+}
+
 export async function fetchGscData(): Promise<GscData | null> {
   const raw = process.env.GSC_SERVICE_ACCOUNT_JSON;
   const siteUrl = process.env.GSC_SITE_URL;
